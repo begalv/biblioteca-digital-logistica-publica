@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /cgi-bin/
+Disallow: /imagens/
+Disallow: /jpgraph/
+Disallow: /limesurvery/
+Disallow: /manual_download
+Disallow: /notice/
+Disallow: /OAI/
+Disallow: /pacotes/
+Disallow: /phpPgAdmin/
+Disallow: /softwares/
+Disallow: /alerta_zika/

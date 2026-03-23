@@ -1,0 +1,252 @@
+from django.db import models
+
+
+class Topic(models.Model):
+    """Coleções/subcoleções — mapeia tabela 'topic' do Nou-Rau."""
+
+    name = models.CharField(max_length=300)
+    description = models.CharField(max_length=300, blank=True)
+    parent_id = models.IntegerField(default=0)
+    maintainer_id = models.IntegerField(null=True, blank=True)
+    options = models.CharField(max_length=2000, blank=True, default="")
+    created = models.DateTimeField(auto_now_add=True)
+    tipo_acesso = models.IntegerField(default=0)
+    archieve = models.CharField(max_length=1, default="s")
+    url = models.CharField(max_length=150, blank=True)
+    remote = models.CharField(max_length=1, default="n")
+
+    class Meta:
+        managed = False
+        db_table = "topic"
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def is_root(self):
+        return self.parent_id == 0
+
+    @property
+    def children(self):
+        return Topic.objects.filter(parent_id=self.id)
+
+    @property
+    def parent(self):
+        if self.parent_id == 0:
+            return None
+        return Topic.objects.filter(id=self.parent_id).first()
+
+
+class TopicPath(models.Model):
+    """Caminho hierárquico das coleções — mapeia tabela 'topic_path'."""
+
+    topic_id = models.IntegerField(primary_key=True)
+    parent_ids = models.CharField(max_length=200, blank=True)
+    parent_names = models.CharField(max_length=2000, blank=True)
+    changed = models.CharField(max_length=1, default="n")
+
+    class Meta:
+        managed = False
+        db_table = "topic_path"
+
+
+class NrCategory(models.Model):
+    """Categorias temáticas — mapeia tabela 'nr_category'."""
+
+    name = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=150, blank=True)
+    max_size = models.IntegerField(default=0)
+
+    class Meta:
+        managed = False
+        db_table = "nr_category"
+
+    def __str__(self):
+        return self.name
+
+
+class NrFormat(models.Model):
+    """Formatos de arquivo — mapeia tabela 'nr_format'."""
+
+    name = models.CharField(max_length=50, unique=True)
+    type = models.CharField(max_length=20, blank=True)
+    subtype = models.CharField(max_length=100, blank=True)
+    extension = models.CharField(max_length=10, blank=True)
+    icon = models.CharField(max_length=3, blank=True)
+    compress = models.CharField(max_length=1, blank=True)
+    verify = models.CharField(max_length=1, blank=True)
+    name_pt = models.CharField(max_length=50, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = "nr_format"
+
+    def __str__(self):
+        return self.name
+
+
+class TypeInformation(models.Model):
+    """Tipos de informação (artigo, tese, etc.) — mapeia tabela 'type_information'."""
+
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = "type_information"
+
+    def __str__(self):
+        return self.name
+
+
+class Document(models.Model):
+    """Documento digital — mapeia tabela 'nr_document' do Nou-Rau."""
+
+    STATUS_CHOICES = [
+        ("i", "Incoming"),
+        ("w", "Waiting"),
+        ("a", "Archived"),
+        ("d", "Denied"),
+        ("v", "Verified"),
+    ]
+
+    title = models.CharField(max_length=1500)
+    title_en = models.CharField(max_length=1500, blank=True)
+    author = models.CharField(max_length=3000, blank=True)
+    autor_principal = models.CharField(max_length=800, blank=True)
+    email = models.CharField(max_length=150, blank=True)
+    keywords = models.TextField(blank=True)
+    keywords_en = models.TextField(blank=True)
+    abstract = models.TextField(blank=True)
+    abstract_en = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    code = models.CharField(max_length=50, unique=True)
+    info = models.TextField(blank=True)
+    topic_id = models.IntegerField(null=True, blank=True)
+    owner_id = models.IntegerField(null=True, blank=True)
+    category_id = models.IntegerField(null=True, blank=True)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="i")
+    filename = models.CharField(max_length=950, blank=True)
+    size = models.IntegerField(null=True, blank=True)
+    format_id = models.IntegerField(null=True, blank=True)
+    visits = models.IntegerField(default=0)
+    downloads = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    remote = models.CharField(max_length=1, default="n")
+    curso = models.CharField(max_length=100, blank=True)
+    disciplina = models.CharField(max_length=100, blank=True)
+    professor = models.CharField(max_length=100, blank=True)
+    departamento = models.CharField(max_length=100, blank=True)
+    typeinformation = models.IntegerField(null=True, blank=True)
+    doi = models.CharField(max_length=180, blank=True)
+    capa = models.CharField(max_length=65, blank=True)
+    descricao_fisica = models.CharField(max_length=500, blank=True)
+    acesso_eletronico = models.CharField(max_length=800, blank=True)
+    source = models.CharField(max_length=900, blank=True)
+    nlspi = models.CharField(max_length=200, blank=True)
+    typeinform_id = models.IntegerField(null=True, blank=True)
+    nota_versao_ori = models.CharField(max_length=1000, blank=True)
+    tacesso = models.IntegerField(default=0)
+    edicao = models.CharField(max_length=900, blank=True)
+    event_description = models.CharField(max_length=5000, blank=True)
+    avulso = models.CharField(max_length=1, default="n")
+    view_document = models.CharField(max_length=1, default="0")
+    dados_pesquisa = models.CharField(max_length=800, blank=True)
+
+    # Campos customizados SGGD/LILP
+    tipologia = models.CharField(max_length=255, blank=True)
+    etapa_processo_licitatorio = models.CharField(max_length=255, blank=True)
+    complexidade = models.CharField(max_length=50, blank=True)
+    uso_futuro = models.TextField(blank=True)
+    metodo = models.TextField(blank=True)
+    resultado = models.TextField(blank=True)
+    referencias = models.TextField(blank=True)
+    publicacao = models.CharField(max_length=500, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = "nr_document"
+
+    def __str__(self):
+        return self.title or f"Document #{self.pk}"
+
+    @property
+    def topic(self):
+        if self.topic_id:
+            return Topic.objects.filter(id=self.topic_id).first()
+        return None
+
+    @property
+    def category(self):
+        if self.category_id:
+            return NrCategory.objects.filter(id=self.category_id).first()
+        return None
+
+    @property
+    def format(self):
+        if self.format_id:
+            return NrFormat.objects.filter(id=self.format_id).first()
+        return None
+
+    @property
+    def type_info(self):
+        if self.typeinform_id:
+            return TypeInformation.objects.filter(id=self.typeinform_id).first()
+        return None
+
+    @property
+    def is_remote(self):
+        return self.remote == "y"
+
+    @property
+    def is_archived(self):
+        return self.status == "a"
+
+
+class NrOds(models.Model):
+    """Objetivos de Desenvolvimento Sustentável — mapeia tabela 'nr_ods'."""
+
+    description = models.CharField(max_length=100)
+    ordem = models.IntegerField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = "nr_ods"
+
+    def __str__(self):
+        return self.description
+
+
+class SupplementaryFile(models.Model):
+    """Arquivos suplementares — mapeia tabela 'supplementary_files'."""
+
+    filename = models.CharField(max_length=150)
+    size = models.IntegerField(null=True)
+    document_id = models.IntegerField()
+    category_id = models.IntegerField()
+    owner_id = models.IntegerField()
+    format_id = models.IntegerField()
+    remote = models.CharField(max_length=1, default="n")
+    topic_id = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = "supplementary_files"
+
+
+class VisitasDownloads(models.Model):
+    """Registro de visitas e downloads — mapeia tabela 'visitas_downloads'."""
+
+    ip = models.CharField(max_length=15, blank=True)
+    data = models.DateTimeField(auto_now_add=True)
+    code = models.CharField(max_length=50, blank=True)
+    tipo = models.CharField(max_length=1, blank=True)
+    topic_id = models.IntegerField(null=True)
+    country = models.CharField(max_length=100, blank=True)
+    user_id = models.IntegerField(null=True)
+    origem = models.CharField(max_length=2, blank=True)
+    idsf = models.IntegerField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = "visitas_downloads"

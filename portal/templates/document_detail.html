@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}{{ document.title }} — Biblioteca Digital de Logística Pública{% endblock %}
+
+{% block content %}
+<article class="document-detail">
+    <h2>{{ document.title }}</h2>
+    {% if document.title_en %}
+    <p class="title-en">{{ document.title_en }}</p>
+    {% endif %}
+
+    <div class="document-actions">
+        {% if document.is_remote and document.acesso_eletronico %}
+        <a href="{{ document.acesso_eletronico }}" target="_blank" rel="noopener" class="btn btn-primary">Acessar documento</a>
+        {% elif document.filename %}
+        <a href="{% url 'catalog:download' document.code %}" class="btn btn-primary">Download</a>
+        {% endif %}
+    </div>
+
+    <div class="document-metadata">
+        <table class="metadata-table">
+            {% if document.autor_principal %}
+            <tr><th>Autor principal</th><td>{{ document.autor_principal }}</td></tr>
+            {% endif %}
+            {% if document.author and document.author != document.autor_principal %}
+            <tr><th>Autores</th><td>{{ document.author }}</td></tr>
+            {% endif %}
+            {% if document.source %}
+            <tr><th>Imprenta</th><td>{{ document.source }}</td></tr>
+            {% endif %}
+            {% if document.publicacao %}
+            <tr><th>Publicação</th><td>{{ document.publicacao }}</td></tr>
+            {% endif %}
+            {% if document.edicao %}
+            <tr><th>Edição</th><td>{{ document.edicao }}</td></tr>
+            {% endif %}
+            {% if document.doi %}
+            <tr><th>DOI</th><td><a href="https://doi.org/{{ document.doi }}" target="_blank" rel="noopener">{{ document.doi }}</a></td></tr>
+            {% endif %}
+            {% if document.nlspi %}
+            <tr><th>ISSN/ISBN</th><td>{{ document.nlspi }}</td></tr>
+            {% endif %}
+            {% if document.topic %}
+            <tr><th>Coleção</th><td><a href="{% url 'catalog:collection_detail' document.topic_id %}">{{ document.topic.name }}</a></td></tr>
+            {% endif %}
+            {% if document.category %}
+            <tr><th>Categoria</th><td>{{ document.category.name }}</td></tr>
+            {% endif %}
+            {% if document.type_info %}
+            <tr><th>Tipo</th><td>{{ document.type_info.name }}</td></tr>
+            {% endif %}
+            {% if document.tipologia %}
+            <tr><th>Tipologia</th><td>{{ document.tipologia }}</td></tr>
+            {% endif %}
+            {% if document.etapa_processo_licitatorio %}
+            <tr><th>Etapa do processo licitatório</th><td>{{ document.etapa_processo_licitatorio }}</td></tr>
+            {% endif %}
+            {% if document.complexidade %}
+            <tr><th>Complexidade</th><td>{{ document.complexidade }}</td></tr>
+            {% endif %}
+            {% if document.format %}
+            <tr><th>Formato</th><td>{{ document.format.name }}</td></tr>
+            {% endif %}
+            {% if document.descricao_fisica %}
+            <tr><th>Descrição física</th><td>{{ document.descricao_fisica }}</td></tr>
+            {% endif %}
+            <tr><th>Visitas</th><td>{{ document.visits }}</td></tr>
+            <tr><th>Downloads</th><td>{{ document.downloads }}</td></tr>
+        </table>
+    </div>
+
+    {% if document.abstract %}
+    <section class="document-section">
+        <h3>Resumo</h3>
+        <p>{{ document.abstract }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.abstract_en %}
+    <section class="document-section">
+        <h3>Abstract</h3>
+        <p>{{ document.abstract_en }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.keywords %}
+    <section class="document-section">
+        <h3>Palavras-chave</h3>
+        <p>{{ document.keywords }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.metodo %}
+    <section class="document-section">
+        <h3>Método</h3>
+        <p>{{ document.metodo }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.resultado %}
+    <section class="document-section">
+        <h3>Resultados</h3>
+        <p>{{ document.resultado }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.uso_futuro %}
+    <section class="document-section">
+        <h3>Uso futuro</h3>
+        <p>{{ document.uso_futuro }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.referencias %}
+    <section class="document-section">
+        <h3>Referências</h3>
+        <p>{{ document.referencias }}</p>
+    </section>
+    {% endif %}
+
+    {% if document.description %}
+    <section class="document-section">
+        <h3>Informações adicionais</h3>
+        <p>{{ document.description }}</p>
+    </section>
+    {% endif %}
+</article>
+{% endblock %}

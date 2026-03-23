@@ -1,0 +1,265 @@
+body, td, .text {
+  color: #000000;
+  font-family: helvetica, arial, sans-serif;
+  font-size: 12px;
+}
+
+h2 { font-size: 16px }
+
+h1 {
+	text-align: center;
+	color: Black;
+	font-size: 20px;
+}
+
+a:link, a:visited { color: #0000ff }
+a:hover           { color: #8080ff }
+.emphasis { color: #ff0000 }
+.inverse  { color: #ffffff }
+    
+body    { background-color: #ffffff; }
+.border { background-color: #000000 }
+.base   { background-color: #ffffff }
+.even   { background-color: #f8f8f8 }
+.odd    { background-color: #eeeeee }
+.hilite { background-color: #ffff00 }
+.title  { background-color: #ff5a39 }
+.footer { background-color: #ff5a39 }
+.bordertitle { background-color: #D4D4D4}
+.center{text-align: center;}
+
+.form_caixa
+ {
+   color: black;
+   font-size: 10px;
+   text-align: left;
+ }
+
+.form_botao {
+	text-align: center;
+	}  
+
+/*popup*/
+.transparent {
+	opacity: 0.9;
+	-moz-opacity: 0.9;
+	-khtml-opacity: 0.9;
+	filter:alpha(opacity=90);
+	font-family: helvetica, arial, sans-serif;
+	font-size: 12px;
+	background-color:#D4D4D4;
+	display:none;
+	width:800;
+	height:100;
+	position:absolute;
+	color: black;
+	border: 1 #D4D4D4 solid;
+  }
+
+#text {
+	margin:50px auto;
+	width:500px;
+ }
+ 
+.hotspot {
+   color:#900; 
+	padding-bottom:1px;
+	border-bottom:1px dotted #900;
+	cursor:pointer;
+	}
+
+
+.transparent {
+	opacity: 0.9;
+	-moz-opacity: 0.9;
+	-khtml-opacity: 0.9;
+	filter:alpha(opacity=90);
+	font-family: helvetica, arial, sans-serif;
+	font-size: 12px;
+	background-color:#D4D4D4;
+	display:none;
+	width:950;
+	height:200;
+	position:absolute;
+	color: black;
+	border: 1 #D4D4D4 solid;
+  }
+
+/*Indicadores*/  
+
+#report{
+	width: 95%;
+	margin-left: 35px;
+	margin-right: 30px;
+}
+
+#tableborder{
+	border: 1px solid black;
+}
+
+#tableborder1{
+	border: 1px solid black;
+	margin: 3px 2px 3px 2px;
+	padding: 0px 1px 0px 0px;
+}
+
+#tableborder{
+	border: 1px solid black;
+	margin: 3px 2px 3px 2px;
+	padding: 0px 1px 0px 0px;
+}
+
+#tableborderteses{
+	border: 1px solid black;
+	margin: 3px 2px 3px 2px;
+	padding: 0px 1px 0px 0px;
+}
+
+
+#indspan{
+   border: 1px solid black; 
+	font-weight: bold;
+	margin: 5px 0px 5px 0px;
+   padding: 5px 0px 5px 0px;
+	font-size: 11px;
+}
+
+#ind
+{
+  color: #000000;
+  font-family: helvetica, arial, sans-serif;
+  font-size: 12px;
+  border-collapse:collapse;
+}
+
+#ind td, #ind th
+{
+	font-size: 11px;
+	border: 1px solid white;
+	padding: 3px 7px 2px 7px;
+}
+
+#ind th
+{
+   background-color: #ff5a39;
+	text-align: left;
+	padding-top: 5px;
+	padding-bottom: 4px;
+	font-weight: bold;
+}
+
+#ind tr.even
+{
+ background-color: #f8f8f8;
+} 
+
+#ind tr.odd
+{
+	background-color: #eeeeee;
+}		
+
+#ind tr.title
+{
+	background-color: #D4D4D4;
+	text-align: center;
+	font-weight: bold;
+}
+
+#ind td.left
+{
+  text-align: left;
+}		
+
+#ind td.right
+{
+	text-align: right;
+}       
+#ind td.center
+{
+	text-align: center;
+}		
+     
+/*usuario - topicos - Select*/     
+
+select.topico{
+ font-family: helvetica, arial, sans-serif;
+ font-size: 1em;
+}
+
+textarea.viewtopic{
+   font-family: helvetica, arial, sans-serif;
+	background-color: #eeeeee;
+	color: #000;
+	border-top: 1px solid #eeeeee;
+	border-left: 1px solid #eeeeee;
+	border-bottom: 1px solid #eeeeee;
+	border-right: 1px solid #eeeeee;
+	font-size: 1em;
+	margin-left: 35px;
+}
+
+/*option.niv0 {
+	margin-left: 0px;
+}
+option.niv1 {*/ 
+	/*margin-left: 60em;*/
+ 
+/*  font-weight: lighter;
+}
+
+option.niv2 {
+	/*margin-left: 20px;*/
+/*	background-color: #FFFFE0;
+} 
+
+/*Página de Ajuda - Estilo tabela*/
+#ajuda 
+{
+  color: #000000;
+  font-family: helvetica, arial, sans-serif;
+  font-size: 12px;
+  border-collapse:collapse;
+}
+
+#ajuda td, #ajuda th
+{
+	font-size:1em;
+	border: 1px solid black;
+	padding:3px 7px 2px 7px;
+}
+
+#ajuda th
+{
+   background-color: #ff5a39;
+	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 4px;
+}
+
+#ajuda tr.even
+{
+ background-color: #f8f8f8;
+} 
+
+#ajuda tr.odd
+{
+	background-color: #eeeeee;
+}
+
+#ajuda td.nivelS
+{
+	text-align: center;
+	font-weight: bold;
+	color: Green;
+}
+
+#ajuda td.nivelN
+{
+	text-align: center;
+	font-weight: bold;
+	color: Red;
+}
+
+option.tcc {
+	background: InactiveCaption;
+}

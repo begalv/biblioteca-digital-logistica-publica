@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load catalog_tags %}
+
+{% block title %}Início — Biblioteca Digital de Logística Pública{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2>Pesquise na Biblioteca Digital de Logística Pública</h2>
+    <p>{{ total_docs }} documentos em {{ total_collections }} coleções</p>
+    <form action="{% url 'catalog:search' %}" method="get" class="search-form-hero">
+        <input type="text" name="q" placeholder="Buscar por título, autor, palavras-chave..." class="search-input-hero" autofocus>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+</section>
+
+<section class="collections-grid">
+    <h3>Coleções</h3>
+    <div class="grid grid-4">
+        {% for collection in collections %}
+        <a href="{% url 'catalog:collection_detail' collection.id %}" class="card">
+            <h4>{{ collection.name }}</h4>
+            <p>{{ collection.description }}</p>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="recent-docs">
+    <h3>Adições recentes</h3>
+    <div class="doc-list">
+        {% for doc in recent_docs %}
+        <div class="doc-item">
+            <a href="{% url 'catalog:document_detail' doc.code %}">
+                <h4>{{ doc.title }}</h4>
+            </a>
+            <p class="doc-meta">
+                {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
+                {% if doc.source %} — {{ doc.source }}{% endif %}
+            </p>
+            {% if doc.abstract %}
+            <p class="doc-abstract">{{ doc.abstract|truncate_words_html:25 }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
