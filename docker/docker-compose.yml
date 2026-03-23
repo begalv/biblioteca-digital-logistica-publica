@@ -49,6 +49,8 @@ services:
       POSTGRES_PORT: "5432"
       PORTAL_DB_USER: ${PORTAL_DB_USER:-portal_reader}
       PORTAL_DB_PASSWORD: ${PORTAL_DB_PASSWORD:-portal_reader_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-php}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-abc123}
       NOURAU_SITE_URL: ${NOURAU_SITE_URL:-http://localhost:8080}
       NOURAU_ARCHIVE_DIR: /nourau/archive
     volumes:

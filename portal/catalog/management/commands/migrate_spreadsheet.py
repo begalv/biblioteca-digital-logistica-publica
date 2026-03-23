@@ -17,7 +17,7 @@ import openpyxl
 # Mapeamento de colunas da planilha para campos do banco
 COLUMN_MAP = {
     "Título": "title",
-    "Autor(es)": "author",
+    "Autor (es)": "author",
     "Ano": "year",
     "Link": "acesso_eletronico",
     "Resumo": "abstract",
@@ -31,7 +31,7 @@ COLUMN_MAP = {
     "Uso Futuro": "uso_futuro",
     "Autoridade Intelectual": "autor_principal",
     "DOI": "doi",
-    "Série (ISSN/ISBN)": "nlspi",
+    "Série (ISSN e ISBN)": "nlspi",
     "Imprenta": "source",
     "Referências": "referencias",
     "Método": "metodo",
@@ -42,11 +42,14 @@ COLUMN_MAP = {
 }
 
 
-def normalize_text(val):
+def normalize_text(val, max_len=None):
     """Limpa e normaliza texto da planilha."""
     if val is None:
         return ""
-    return str(val).strip()
+    text = str(val).strip()
+    if max_len and len(text) > max_len:
+        text = text[:max_len]
+    return text
 
 
 def extract_year(val):
@@ -150,6 +153,11 @@ class Command(BaseCommand):
             record[field] = normalize_text(row[idx]) if idx < len(row) else ""
         return record
 
+    def _get_writer_connection(self):
+        """Retorna conexão com permissão de escrita."""
+        from django.db import connections
+        return connections["nourau_writer"]
+
     def _load_topic_map(self):
         """Carrega mapeamento nome→id de tópicos do banco."""
         with connection.cursor() as cursor:
@@ -165,16 +173,59 @@ class Command(BaseCommand):
         return {row[1].lower(): row[0] for row in rows}
 
     def _resolve_topic(self, record, topic_map):
-        """Resolve o topic_id baseado na subcategoria/categoria do registro."""
-        subcategoria = record.get("subcategoria", "").lower()
-        categoria = record.get("categoria", "").lower()
+        """
+        Resolve o topic_id com base no tipo de documento (formato_raw).
+        A planilha não tem coluna de coleção — inferimos pelo formato:
+          - Dissertações/Teses/TCCs → Trabalhos Acadêmicos
+          - Apostilas/Manuais/Relatórios/Slides → Materiais Pedagógicos
+          - Livros/E-books → Livros Digitais
+          - Eventos/Congressos/Seminários → Eventos
+          - Outros → Materiais Pedagógicos (padrão)
+        """
+        fmt = record.get("formato_raw", "").lower()
 
-        # Tentar subcategoria primeiro, depois categoria
-        for key in [subcategoria, categoria]:
-            if key and key in topic_map:
-                return topic_map[key]["id"]
+        mapa_formato = {
+            "dissertação": "trabalhos acadêmicos",
+            "dissertacao": "trabalhos acadêmicos",
+            "tese": "trabalhos acadêmicos",
+            "tcc": "trabalhos acadêmicos",
+            "trabalho de conclusão": "trabalhos acadêmicos",
+            "monografia": "trabalhos acadêmicos",
+            "livro": "livros digitais",
+            "e-book": "livros digitais",
+            "ebook": "livros digitais",
+            "manual": "materiais pedagógicos",
+            "apostila": "materiais pedagógicos",
+            "relatório": "materiais pedagógicos",
+            "relatorio": "materiais pedagógicos",
+            "slides": "materiais pedagógicos",
+            "apresentação": "materiais pedagógicos",
+            "tutorial": "materiais pedagógicos",
+            "vídeo": "materiais pedagógicos",
+            "video": "materiais pedagógicos",
+            "evento": "eventos",
+            "congresso": "eventos",
+            "seminário": "eventos",
+            "seminario": "eventos",
+            "workshop": "eventos",
+            "conferência": "eventos",
+            "conferencia": "eventos",
+            "simpósio": "eventos",
+            "simposio": "eventos",
+        }
 
-        # Fallback: primeira coleção raiz
+        colecao_alvo = "materiais pedagógicos"  # padrão
+        for chave, colecao in mapa_formato.items():
+            if chave in fmt:
+                colecao_alvo = colecao
+                break
+
+        # Buscar o topic_id correspondente
+        for nome, info in topic_map.items():
+            if info["parent_id"] == 0 and colecao_alvo in nome:
+                return info["id"]
+
+        # Fallback absoluto: qualquer coleção raiz
         for info in topic_map.values():
             if info["parent_id"] == 0:
                 return info["id"]
@@ -182,17 +233,28 @@ class Command(BaseCommand):
 
     def _resolve_category(self, categoria_name, category_map):
         """Resolve o category_id baseado no nome da categoria."""
-        key = categoria_name.lower()
+        if not categoria_name:
+            return None
+        key = categoria_name.lower().strip()
+
+        # Correspondência exata
         if key in category_map:
             return category_map[key]
+
+        # Correspondência normalizada (sem vírgulas/acentos ligeiros)
+        key_norm = key.replace(",", "").replace("  ", " ")
+        for cat_key, cat_id in category_map.items():
+            if cat_key.replace(",", "").replace("  ", " ") == key_norm:
+                return cat_id
+
         # Busca parcial
         for cat_key, cat_id in category_map.items():
-            if key and key in cat_key:
+            if key[:20] in cat_key or cat_key[:20] in key:
                 return cat_id
         return None
 
     def _insert_document(self, record, code, topic_id, category_id):
-        """Insere um documento no banco via SQL direto."""
+        """Insere um documento no banco via SQL direto (usando usuário com permissão de escrita)."""
         # Construir description a partir de campos auxiliares
         description_parts = []
         if record.get("finalidade"):
@@ -208,7 +270,8 @@ class Command(BaseCommand):
             autores = record["author"].split(";")
             autor_principal = autores[0].strip()
 
-        with connection.cursor() as cursor:
+        writer = self._get_writer_connection()
+        with writer.cursor() as cursor:
             cursor.execute(
                 """
                 INSERT INTO nr_document (
@@ -240,9 +303,9 @@ class Command(BaseCommand):
                     record.get("doi", ""),
                     record.get("nlspi", ""),
                     record.get("source", ""),
-                    record.get("tipologia", ""),
-                    record.get("etapa_processo_licitatorio", ""),
-                    record.get("complexidade", ""),
+                    normalize_text(record.get("tipologia", ""), 255),
+                    normalize_text(record.get("etapa_processo_licitatorio", ""), 255),
+                    normalize_text(record.get("complexidade", ""), 50),
                     record.get("uso_futuro", ""),
                     record.get("metodo", ""),
                     record.get("resultado", ""),

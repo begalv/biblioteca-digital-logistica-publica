@@ -54,7 +54,16 @@ DATABASES = {
         "PASSWORD": env("PORTAL_DB_PASSWORD", default="portal_reader_dev"),
         "HOST": env("POSTGRES_HOST", default="localhost"),
         "PORT": env("POSTGRES_PORT", default="5432"),
-    }
+    },
+    # Conexão de escrita para importação de dados (usuário do Nou-Rau)
+    "nourau_writer": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB", default="nourau"),
+        "USER": env("POSTGRES_USER", default="php"),
+        "PASSWORD": env("POSTGRES_PASSWORD", default="abc123"),
+        "HOST": env("POSTGRES_HOST", default="localhost"),
+        "PORT": env("POSTGRES_PORT", default="5432"),
+    },
 }
 
 LANGUAGE_CODE = "pt-br"
