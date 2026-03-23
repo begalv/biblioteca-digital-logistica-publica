@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Coleções — Biblioteca Digital de Logística Pública{% endblock %}
+
+{% block content %}
+<h2>Coleções</h2>
+
+<div class="grid grid-2">
+    {% for item in collection_data %}
+    <div class="card collection-card">
+        <h3><a href="{% url 'catalog:collection_detail' item.topic.id %}">{{ item.topic.name }}</a></h3>
+        <p>{{ item.topic.description }}</p>
+        <p class="collection-count">{{ item.doc_count }} documento{{ item.doc_count|pluralize }}</p>
+        {% if item.subcollections %}
+        <ul class="subcollection-list">
+            {% for sub in item.subcollections %}
+            <li><a href="{% url 'catalog:collection_detail' sub.id %}">{{ sub.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

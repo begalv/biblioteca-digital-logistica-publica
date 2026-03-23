@@ -1,0 +1,43 @@
+<?php
+
+// NOU-RAU - Copyright (C) 2002 Instituto Vale do Futuro
+// Configuração gerada automaticamente via Docker entrypoint
+
+/*-------------- database --------------*/
+
+$cfg_base = '${POSTGRES_DB}';
+$cfg_host = '${POSTGRES_HOST}';
+$cfg_port = '${POSTGRES_PORT}';
+
+$cfg_user = '${POSTGRES_USER}';
+$cfg_pass = '${POSTGRES_PASSWORD}';
+
+/*-------------- site --------------*/
+
+$cfg_host_site = "${NOURAU_SITE_URL}";
+$cfg_site = $cfg_host_site."/manager/";
+$cfg_site_wp = "${PORTAL_URL}";
+$cfg_dir_image = "$cfg_host_site/images/capas";
+$cfg_site_title = 'Biblioteca Digital de Logística Pública - Nou-Rau';
+
+/*-------------- e-mail --------------*/
+
+$cfg_webmaster = '${NOURAU_WEBMASTER_EMAIL}';
+$cfg_subject_tag = 'BibliotecaDigital';
+$cfg_redirect_emails = false;
+$cfg_obfuscate_emails = true;
+
+/*-------------- layout --------------*/
+
+$cfg_logo_url = "$cfg_site/images/logo-nr.png";
+
+/*-------------- miscellaneous --------------*/
+
+$cfg_session_name = $cfg_base;
+define('HALT', false);
+
+$recaptcha = false;
+$recaptcha_key = "";
+$recaptcha_secret = "";
+
+?>

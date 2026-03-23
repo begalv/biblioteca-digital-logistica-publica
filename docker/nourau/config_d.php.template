@@ -1,0 +1,15 @@
+<?php
+
+// NOU-RAU - Copyright (C) 2002 Instituto Vale do Futuro
+// Configuração de diretórios gerada automaticamente via Docker entrypoint
+
+/*-------------- directories --------------*/
+
+$cfg_dir_base = '/nourau';
+$cfg_dir_archive = "$cfg_dir_base/archive";
+$cfg_dir_incoming = "$cfg_dir_base/incoming";
+$cfg_dir_remove = "$cfg_dir_base/remove";
+$cfg_dir_log = "$cfg_dir_base/log";
+$cfg_dir_image_capas = "/var/www/html/images/capas";
+
+?>

@@ -205,3 +205,17 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# =========================
+# Projeto BDLP
+# =========================
+
+# Django collected static files
+portal/staticfiles/
+
+# Backups SQL
+backup_*.sql
+
+# Dados de migração temporários
+migration/output/
+migration/*.log
