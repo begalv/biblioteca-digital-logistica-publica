@@ -1,7 +1,16 @@
 --
 -- Categorias temáticas para a Biblioteca Digital de Logística Pública
 -- Derivadas da planilha de 496 estudos catalogados
+-- Substituem as categorias padrão do Nou-Rau inseridas no 04-reset-nr.sql
 --
+
+-- Remover categorias padrão e dependências
+DELETE FROM nr_category_format;
+DELETE FROM nr_topic_category;
+DELETE FROM nr_category;
+
+-- Resetar sequência
+SELECT setval('nr_category_seq', 0);
 
 INSERT INTO nr_category (name, description, max_size) VALUES
     ('Aspectos Jurídicos e Regulatórios', 'Legislação, normas e marcos regulatórios de compras e logística pública', 0),
