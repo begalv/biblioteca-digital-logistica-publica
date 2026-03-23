@@ -3,7 +3,7 @@
 -- Nou-Rau: Sistema de Armazenamento e Indexação de Documentos Digitais
 --
 
-CREATE FUNCTION _ (VARCHAR) RETURNS VARCHAR AS 'SELECT $1' LANGUAGE 'plpgsql';
+CREATE FUNCTION _ (VARCHAR) RETURNS VARCHAR AS 'SELECT $1' LANGUAGE 'sql';
 
 CREATE SEQUENCE notice_seq MINVALUE 0;
 CREATE SEQUENCE topic_seq  MINVALUE 0;
