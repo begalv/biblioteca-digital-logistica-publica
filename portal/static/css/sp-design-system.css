@@ -1,0 +1,124 @@
+/*
+ * ============================================================
+ * Portal BDLP — Design System Governo SP (sp-design-system.css)
+ *
+ * Componentes novos da reforma de identidade visual GESP v1.6.
+ * Carregado ANTES de style.css em base.html para que regras de
+ * página (style.css) tenham precedência em caso de conflito.
+ *
+ * Convenção: prefixo .sp- para todas as classes deste arquivo.
+ * ============================================================
+ */
+
+/* ------------------------------------------------------------
+   Container institucional padrão (max 1320px / gutter 30px)
+   ------------------------------------------------------------ */
+.sp-container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+}
+
+/* ------------------------------------------------------------
+   Skip-links (eMAG R3.1) — invisíveis até receberem foco
+   ------------------------------------------------------------ */
+.sp-skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 9999;
+    background: var(--sp-azul);
+    color: var(--sp-branco);
+    padding: 0.75rem 1.25rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--fs-body);
+    border: 3px solid var(--sp-foco);
+    border-radius: 0 0 6px 6px;
+}
+
+.sp-skip-link:focus {
+    left: 1rem;
+    top: 0;
+    outline: 3px solid var(--sp-foco);
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   Modo alto contraste (WCAG AAA) — toggle pela barra GovSP
+   Ativado via classe body.sp-alto-contraste (set por main.js)
+   ------------------------------------------------------------ */
+body.sp-alto-contraste {
+    background: var(--sp-preto) !important;
+    color: var(--sp-amarelo) !important;
+}
+
+body.sp-alto-contraste a,
+body.sp-alto-contraste a:visited {
+    color: var(--sp-amarelo) !important;
+    text-decoration: underline !important;
+}
+
+body.sp-alto-contraste a:hover,
+body.sp-alto-contraste a:focus {
+    background: var(--sp-amarelo) !important;
+    color: var(--sp-preto) !important;
+}
+
+body.sp-alto-contraste header,
+body.sp-alto-contraste main,
+body.sp-alto-contraste footer,
+body.sp-alto-contraste section,
+body.sp-alto-contraste article,
+body.sp-alto-contraste .card,
+body.sp-alto-contraste .hero,
+body.sp-alto-contraste .doc-item,
+body.sp-alto-contraste .result-item,
+body.sp-alto-contraste .search-filters,
+body.sp-alto-contraste .metadata-table,
+body.sp-alto-contraste .metadata-table th,
+body.sp-alto-contraste .metadata-table td {
+    background: var(--sp-preto) !important;
+    color: var(--sp-amarelo) !important;
+    border-color: var(--sp-amarelo) !important;
+}
+
+body.sp-alto-contraste *:focus-visible {
+    outline: 3px solid var(--sp-branco);
+    outline-offset: 2px;
+}
+
+body.sp-alto-contraste img:not([alt=""]) {
+    filter: grayscale(100%) contrast(1.2);
+}
+
+/* ------------------------------------------------------------
+   Escala de fonte ajustável (controles A+/A− da barra GovSP)
+   Set pela classe no <html> via main.js
+   ------------------------------------------------------------ */
+html.sp-fonte-aumentada-1 { font-size: 112.5%; }   /* 18px */
+html.sp-fonte-aumentada-2 { font-size: 125%; }     /* 20px */
+html.sp-fonte-aumentada-3 { font-size: 137.5%; }   /* 22px */
+html.sp-fonte-aumentada-4 { font-size: 150%; }     /* 24px */
+html.sp-fonte-diminuida-1 { font-size: 93.75%; }   /* 15px */
+html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
+
+/* ------------------------------------------------------------
+   Sprite SVG de ícones (escondido fora do fluxo)
+   ------------------------------------------------------------ */
+.sp-icons-sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.sp-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    fill: currentColor;
+    stroke: currentColor;
+}
