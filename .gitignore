@@ -142,6 +142,9 @@ env/
 venv/
 ENV/
 env.bak/
+
+# Preview offline gerado por tools/preview_render.py — não versionar
+preview_output/
 venv.bak/
 
 # Spyder project settings
