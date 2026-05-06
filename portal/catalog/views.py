@@ -155,3 +155,39 @@ def download(request, code):
 def about(request):
     """Sobre o LILP e a biblioteca."""
     return render(request, "about.html")
+
+
+# =====================================================================
+# Páginas institucionais e legais (eMAG 3.1, LAI, LGPD, Lei 13.460/2017)
+# Conteúdo em rascunho — aviso visual em cada página solicita validação
+# pelo Encarregado de Dados (DPO) e pela Procuradoria/Assessoria Jurídica.
+# =====================================================================
+
+def transparencia(request):
+    """Página de Transparência — atende LAI (Lei 12.527/2011)."""
+    return render(request, "legal/transparencia.html")
+
+
+def acessibilidade(request):
+    """Compromisso de acessibilidade — eMAG 3.1 / WCAG 2.0 AA."""
+    return render(request, "legal/acessibilidade.html")
+
+
+def politica_privacidade(request):
+    """Política de Privacidade — atende LGPD (Lei 13.709/2018)."""
+    return render(request, "legal/politica_privacidade.html")
+
+
+def politica_cookies(request):
+    """Política de Cookies — atende LGPD e Marco Civil (Lei 12.965/2014)."""
+    return render(request, "legal/politica_cookies.html")
+
+
+def mapa_site(request):
+    """Mapa do site — recomendação eMAG 3.1."""
+    return render(request, "legal/mapa_site.html")
+
+
+def fale_conosco(request):
+    """Canal de contato — Lei 13.460/2017 (Direitos do Usuário)."""
+    return render(request, "legal/fale_conosco.html")

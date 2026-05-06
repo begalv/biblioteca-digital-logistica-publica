@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Política de Privacidade — Biblioteca Digital de Logística Pública | Governo de SP{% endblock %}
+{% block meta_description %}Política de Privacidade do Portal BDLP em conformidade com a LGPD (Lei 13.709/2018). Identificação do controlador, finalidades, base legal e direitos do titular.{% endblock %}
+
+{% block content %}
+{% include "_partials/_aviso_rascunho.html" %}
+
+<article class="sp-pagina-legal">
+  <header>
+    <h1>Política de Privacidade</h1>
+    <p class="sp-pagina-legal__intro">
+      Esta política descreve como o Portal da Biblioteca Digital de Logística
+      Pública (BDLP) trata os dados pessoais coletados de seus visitantes,
+      em observância à <strong>Lei nº 13.709/2018 (Lei Geral de Proteção
+      de Dados — LGPD)</strong>, ao Marco Civil da Internet (Lei nº
+      12.965/2014) e à Estratégia de Governo Digital do Estado de SP.
+    </p>
+  </header>
+
+  <section>
+    <h2>1. Controlador dos dados</h2>
+    <address>
+      <p><strong>Estado de São Paulo, por meio da Secretaria de Gestão e
+      Governo Digital — SGGD.</strong></p>
+      <p>Av. Morumbi, 4.500 — Morumbi — São Paulo/SP.</p>
+      <p>Site institucional: <a href="https://www.sggd.sp.gov.br/" target="_blank" rel="noopener noreferrer">sggd.sp.gov.br</a></p>
+    </address>
+  </section>
+
+  <section>
+    <h2>2. Encarregado de Proteção de Dados (DPO)</h2>
+    <p>
+      <em>[A SER PREENCHIDO — nome e contato do Encarregado de Proteção
+      de Dados Pessoais designado pela SGGD, conforme art. 41 da LGPD.]</em>
+    </p>
+  </section>
+
+  <section>
+    <h2>3. Quais dados são tratados</h2>
+    <p>
+      Por padrão, o portal coleta apenas o mínimo necessário ao seu
+      funcionamento técnico e à medição agregada de uso:
+    </p>
+    <ul>
+      <li><strong>Logs técnicos de acesso</strong> — endereço IP (truncado),
+        data/hora, página solicitada, navegador (User-Agent) e código de
+        resposta HTTP. Finalidade: segurança operacional, prevenção a
+        ataques e estatísticas agregadas. Retenção: período conforme
+        políticas de segurança da SGGD.</li>
+      <li><strong>Cookies estritamente necessários</strong> — utilizados
+        para sessões e proteção CSRF do Django. Não dependem de
+        consentimento.</li>
+      <li><strong>Cookies opcionais</strong> — apenas se você aceitar no
+        banner de cookies. Caso aceite, podem ser registradas estatísticas
+        anônimas de navegação. Você pode revogar o consentimento a qualquer
+        momento (veja a <a href="{% url 'catalog:politica_cookies' %}">Política
+        de Cookies</a>).</li>
+      <li><strong>Dados informados em formulário Fale Conosco</strong> —
+        nome, e-mail e mensagem que você nos enviar. Finalidade exclusiva:
+        responder à sua solicitação. Base legal: art. 7º, V (execução de
+        contrato) e art. 7º, II (cumprimento de obrigação legal) da LGPD.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Bases legais para o tratamento</h2>
+    <p>
+      O tratamento de dados pessoais neste portal apoia-se nas seguintes
+      bases legais previstas na LGPD:
+    </p>
+    <ul>
+      <li><strong>Art. 7º, II</strong> — cumprimento de obrigação legal
+        ou regulatória pelo controlador.</li>
+      <li><strong>Art. 7º, III</strong> — execução de políticas públicas
+        previstas em lei (Lei nº 14.133/2021, Decreto Estadual 67.799/2023).</li>
+      <li><strong>Art. 7º, V</strong> — execução de contrato ou
+        procedimentos preliminares.</li>
+      <li><strong>Art. 7º, IX</strong> — atendimento de interesses
+        legítimos do controlador, observados os direitos do titular.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Compartilhamento</h2>
+    <p>
+      Os dados coletados não são vendidos, alugados ou cedidos a terceiros
+      para fins comerciais. Podem ser compartilhados, dentro dos limites
+      legais, com:
+    </p>
+    <ul>
+      <li>Outras unidades do Governo do Estado de SP, quando estritamente
+        necessário ao desempenho de competência legal;</li>
+      <li>Autoridades competentes, mediante requisição judicial ou
+        administrativa formal;</li>
+      <li>O parceiro técnico SBU/Unicamp, exclusivamente para finalidades
+        previstas no Convênio SGGD nº 02/2025.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Direitos do titular</h2>
+    <p>
+      Conforme art. 18 da LGPD, você pode requerer ao controlador, a
+      qualquer momento e mediante requisição:
+    </p>
+    <ul>
+      <li>Confirmação da existência de tratamento dos seus dados;</li>
+      <li>Acesso aos dados;</li>
+      <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
+      <li>Anonimização, bloqueio ou eliminação de dados desnecessários,
+        excessivos ou tratados em desconformidade;</li>
+      <li>Portabilidade a outro fornecedor de serviço;</li>
+      <li>Eliminação dos dados tratados com seu consentimento;</li>
+      <li>Informação sobre as entidades com as quais o controlador
+        compartilhou seus dados;</li>
+      <li>Revogação do consentimento.</li>
+    </ul>
+    <p>
+      Para exercer qualquer desses direitos, entre em contato com o DPO
+      através do canal indicado no item 2 desta política, ou por
+      <a href="{% url 'catalog:fale_conosco' %}">Fale Conosco</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>7. Segurança</h2>
+    <p>
+      O portal adota medidas técnicas e administrativas para proteger os
+      dados pessoais contra acessos não autorizados, perda acidental,
+      destruição ou difusão indevida. Entre as medidas: comunicação
+      criptografada (HTTPS), <em>headers</em> de segurança HTTP, política
+      de senhas para acesso administrativo, segregação de redes e backups
+      periódicos.
+    </p>
+  </section>
+
+  <section>
+    <h2>8. Atualizações desta política</h2>
+    <p>
+      Esta política pode ser atualizada para refletir mudanças legais,
+      tecnológicas ou de processo. Sempre que houver alteração relevante,
+      a data de revisão será atualizada no rodapé desta página e
+      eventualmente comunicada por aviso visual.
+    </p>
+    <p><em>Última revisão: <strong>[a definir após validação jurídica]</strong>.</em></p>
+  </section>
+</article>
+{% endblock %}

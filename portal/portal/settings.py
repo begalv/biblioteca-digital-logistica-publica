@@ -39,6 +39,7 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
+                "catalog.context_processors.site_context",
             ],
         },
     },
@@ -87,3 +88,42 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     X_FRAME_OPTIONS = "DENY"
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+    # Content-Security-Policy via django-csp.
+    # Inserido após SecurityMiddleware para que CSP atue antes do whitenoise
+    # processar arquivos estáticos. Não ativado em DEBUG para evitar que
+    # ferramentas locais (DevTools, painel de extensões) sejam bloqueadas.
+    MIDDLEWARE.insert(1, "csp.middleware.CSPMiddleware")
+
+    # Permitir apenas o próprio domínio por padrão.
+    CSP_DEFAULT_SRC = ("'self'",)
+
+    # Imagens: own + data URIs + domínios oficiais Governo SP.
+    CSP_IMG_SRC = (
+        "'self'",
+        "data:",
+        "https://saopaulo.sp.gov.br",
+        "https://compras.sp.gov.br",
+    )
+
+    # Fontes: own + Google Fonts (Roboto, conforme Manual GESP v1.6).
+    CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
+
+    # Estilos: own + Google Fonts CSS. 'unsafe-inline' por compatibilidade
+    # com pequenos style="" inline em formulários (CSRF tokens etc.); pode
+    # ser endurecido para nonces em iteração futura.
+    CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://fonts.googleapis.com")
+
+    # Scripts: SOMENTE do próprio domínio. main.js usa apenas
+    # addEventListener (zero inline handlers), permitindo que NÃO haja
+    # 'unsafe-inline' aqui.
+    CSP_SCRIPT_SRC = ("'self'",)
+
+    # Conexões XHR/fetch: apenas próprio domínio.
+    CSP_CONNECT_SRC = ("'self'",)
+
+    # Fronteiras de mídia, frames, objetos: bloqueados por padrão.
+    CSP_FRAME_ANCESTORS = ("'none'",)
+    CSP_BASE_URI = ("'self'",)
+    CSP_FORM_ACTION = ("'self'",)

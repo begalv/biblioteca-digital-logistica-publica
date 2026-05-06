@@ -1,54 +1,40 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Biblioteca Digital de Logística Pública{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Repositório digital de produções científicas, técnicas, jurisprudenciais e normativas sobre logística pública, com foco na Lei 14.133/2021. Iniciativa do LILP/SGGD em parceria com o SBU/Unicamp.{% endblock %}">
+    <title>{% block title %}Biblioteca Digital de Logística Pública | Governo de SP{% endblock %}</title>
+
+    {# Tipografia oficial — Roboto (web), Verdana (fallback conforme Manual GESP v1.6) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+
+    {# Folhas de estilo — design system GESP carrega antes para style.css ter precedência #}
+    <link rel="stylesheet" href="{% static 'css/sp-design-system.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="header-logo">
-                    <a href="{% url 'catalog:home' %}">
-                        <h1>Biblioteca Digital de Logística Pública</h1>
-                        <p class="header-subtitle">Estado de São Paulo</p>
-                    </a>
-                </div>
-                <nav class="header-nav">
-                    <a href="{% url 'catalog:home' %}">Início</a>
-                    <a href="{% url 'catalog:collection_list' %}">Coleções</a>
-                    <a href="{% url 'catalog:search' %}">Busca</a>
-                    <a href="{% url 'catalog:about' %}">Sobre</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+    {% include "_partials/_icons_sprite.html" %}
+    {% include "_partials/_skip_links.html" %}
+    {% include "_partials/_barra_govsp.html" %}
 
-    <main class="main">
+    {% include "_partials/_header_institucional.html" %}
+    {% include "_partials/_menu_principal.html" %}
+
+    <main id="sp-conteudo" class="main" role="main" tabindex="-1">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <p><strong>Laboratório de Inovação em Logística Pública (LILP)</strong></p>
-                    <p>Secretaria de Gestão e Governo Digital — SGGD</p>
-                    <p>Governo do Estado de São Paulo</p>
-                </div>
-                <div class="footer-partner">
-                    <p>Em parceria com o Sistema de Bibliotecas da Unicamp (SBU)</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    {% include "_partials/_rodape_institucional.html" %}
+    {% include "_partials/_banner_cookies.html" %}
 
+    <script src="{% static 'js/main.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
