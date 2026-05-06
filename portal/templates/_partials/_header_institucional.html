@@ -1,61 +1,53 @@
-{# Header institucional do Portal BDLP — duas linhas:
-   1) Assinatura institucional (Manual GESP v1.6, Cap. 2, p. 12-15):
-      composição horizontal SBU/Unicamp · LILP · SGGD · Governo SP,
-      separados por divisor vertical 1px cinza-claro.
-   2) Faixa azul institucional com nome do portal e busca rápida (#sp-busca).
-#}
+{% comment %}
+Header institucional do Portal BDLP — Manual GESP v1.6 (abr/2023).
+
+Faixa única branca com:
+- Logo GOV.SP em versão preta (sggd/logo-gov.png) à esquerda
+- Divisor vertical
+- Tipografia institucional: nome da Secretaria + título do portal
+- Busca rápida (#sp-busca) à direita
+- Borda inferior vermelha 4px como assinatura visual
+
+Logos das instituições parceiras (SBU/Unicamp) NÃO aparecem aqui —
+o portal é do Governo do Estado de SP. Parceria é descrita em /sobre/.
+{% endcomment %}
 {% load static %}
 <header class="sp-header" role="banner">
-  <div class="sp-header__assinatura">
-    <div class="sp-header__assinatura-inner">
-      <a class="sp-header__home"
-         href="{% url 'catalog:home' %}"
-         aria-label="Página inicial — Biblioteca Digital de Logística Pública">
-        <ul class="sp-header__logos" aria-label="Instituições parceiras">
-          <li class="sp-header__logo-item">
-            <img src="{% static 'img/logos/sbu-unicamp/sbu-positivo.png' %}"
-                 alt="Sistema de Bibliotecas da Unicamp (SBU)"
-                 width="80" height="46" loading="eager" decoding="async">
-          </li>
-          <li class="sp-header__logo-item">
-            <img src="{% static 'img/logos/lilp/lilp.png' %}"
-                 alt="Laboratório de Inovação em Logística Pública (LILP)"
-                 width="60" height="52" loading="eager" decoding="async">
-          </li>
-          <li class="sp-header__logo-item">
-            <img src="{% static 'img/logos/sggd/logo-footer.png' %}"
-                 alt="Secretaria de Gestão e Governo Digital (SGGD)"
-                 width="160" height="36" loading="eager" decoding="async">
-          </li>
-          <li class="sp-header__logo-item sp-header__logo-item--principal">
-            <img src="{% static 'img/logos/governo-sp/logo-governo-sp-rodape.png' %}"
-                 alt="Governo do Estado de São Paulo"
-                 width="120" height="22" loading="eager" decoding="async">
-          </li>
-        </ul>
-      </a>
-    </div>
-  </div>
+  <div class="sp-header__inner">
+    <a class="sp-header__home"
+       href="{% url 'catalog:home' %}"
+       aria-label="Página inicial — Biblioteca Digital de Logística Pública">
+      <span class="sp-header__logos">
+        <img src="{% static 'img/logos/sggd/logo-gov.png' %}"
+             alt="Governo do Estado de São Paulo"
+             width="206" height="29"
+             class="sp-header__logo sp-header__logo--gov"
+             loading="eager" decoding="async" fetchpriority="high">
+        <img src="{% static 'img/logos/lilp/lilp.png' %}"
+             alt="Laboratório de Inovação em Logística Pública (LILP)"
+             width="74" height="64"
+             class="sp-header__logo sp-header__logo--lilp"
+             loading="eager" decoding="async">
+      </span>
+      <span class="sp-header__divider" aria-hidden="true"></span>
+      <span class="sp-header__brand">
+        <span class="sp-header__brand-secretariat">Secretaria de Gestão e Governo Digital</span>
+        <strong class="sp-header__brand-portal">Biblioteca Digital de Logística Pública</strong>
+      </span>
+    </a>
 
-  <div class="sp-header__faixa-portal">
-    <div class="sp-header__faixa-inner">
-      <a class="sp-header__titulo" href="{% url 'catalog:home' %}">
-        <span class="sp-header__titulo-principal">Biblioteca Digital de Logística Pública</span>
-        <span class="sp-header__titulo-sub">Repositório temático sobre licitações e contratos administrativos — Lei 14.133/2021</span>
-      </a>
-
-      <form id="sp-busca" class="sp-header__busca" action="{% url 'catalog:search' %}" method="get" role="search" aria-label="Busca rápida no acervo">
-        <label for="sp-busca-input" class="sr-only">Buscar no acervo</label>
-        <input type="search"
-               id="sp-busca-input"
-               name="q"
-               placeholder="Buscar no acervo&hellip;"
-               aria-label="Termos da busca"
-               value="{{ request.GET.q|default:'' }}">
-        <button type="submit" class="sp-header__busca-btn" aria-label="Buscar">
-          <svg class="sp-icon" aria-hidden="true" focusable="false"><use href="#icon-busca"/></svg>
-        </button>
-      </form>
-    </div>
+    <form id="sp-busca" class="sp-header__busca" action="{% url 'catalog:search' %}"
+          method="get" role="search" aria-label="Busca rápida no acervo">
+      <label for="sp-busca-input" class="sr-only">Buscar no acervo</label>
+      <input type="search"
+             id="sp-busca-input"
+             name="q"
+             placeholder="Buscar no acervo&hellip;"
+             aria-label="Termos da busca"
+             value="{{ request.GET.q|default:'' }}">
+      <button type="submit" class="sp-header__busca-btn" aria-label="Buscar">
+        <svg class="sp-icon" aria-hidden="true" focusable="false"><use href="#icon-busca"/></svg>
+      </button>
+    </form>
   </div>
 </header>

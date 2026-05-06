@@ -5,7 +5,7 @@
 
 {% block content %}
 <section class="hero" aria-labelledby="hero-titulo">
-    <h2 id="hero-titulo">Pesquise na Biblioteca Digital de Logística Pública</h2>
+    <h1 id="hero-titulo">Pesquise na Biblioteca Digital de Logística Pública</h1>
     <p>Repositório temático sobre licitações, contratos administrativos e logística pública do Estado de São Paulo</p>
     <form action="{% url 'catalog:search' %}" method="get" class="search-form-hero" role="search" aria-label="Busca rápida no acervo">
         <label for="hero-q" class="sr-only">Termos da busca</label>
@@ -38,45 +38,45 @@
 </section>
 
 <section class="sp-acesso-rapido" aria-labelledby="acesso-rapido-titulo">
-    <h3 id="acesso-rapido-titulo">Acesso rápido</h3>
+    <h2 id="acesso-rapido-titulo">Acesso rápido</h2>
     <div class="grid grid-4 sp-acesso-rapido__grid">
         <a href="{% url 'catalog:search' %}" class="card sp-card-acesso">
             <span class="sp-card-acesso__icone" aria-hidden="true">
                 <svg class="sp-icon" focusable="false"><use href="#icon-busca"/></svg>
             </span>
-            <h4>Buscar no acervo</h4>
+            <h3>Buscar no acervo</h3>
             <p>Pesquise por título, autor ou palavras-chave em todo o catálogo.</p>
         </a>
         <a href="{% url 'catalog:collection_list' %}" class="card sp-card-acesso">
             <span class="sp-card-acesso__icone" aria-hidden="true">
                 <svg class="sp-icon" focusable="false"><use href="#icon-menu"/></svg>
             </span>
-            <h4>Coleções</h4>
+            <h3>Coleções</h3>
             <p>Navegue pelos eixos temáticos do acervo: eventos, livros, materiais e teses.</p>
         </a>
         <a href="{% url 'catalog:search' %}?tipologia=Normativo" class="card sp-card-acesso">
             <span class="sp-card-acesso__icone" aria-hidden="true">
                 <svg class="sp-icon" focusable="false"><use href="#icon-info"/></svg>
             </span>
-            <h4>Normativos</h4>
+            <h3>Normativos</h3>
             <p>Leis, decretos, resoluções e instruções normativas aplicáveis à logística pública.</p>
         </a>
         <a href="{% url 'catalog:about' %}" class="card sp-card-acesso">
             <span class="sp-card-acesso__icone" aria-hidden="true">
                 <svg class="sp-icon" focusable="false"><use href="#icon-info"/></svg>
             </span>
-            <h4>Sobre o projeto</h4>
+            <h3>Sobre o projeto</h3>
             <p>Conheça o LILP, a SGGD e a parceria com o SBU/Unicamp.</p>
         </a>
     </div>
 </section>
 
 <section class="collections-grid" aria-labelledby="colecoes-titulo">
-    <h3 id="colecoes-titulo">Coleções</h3>
+    <h2 id="colecoes-titulo">Coleções</h2>
     <div class="grid grid-4">
         {% for collection in collections %}
         <a href="{% url 'catalog:collection_detail' collection.id %}" class="card">
-            <h4>{{ collection.name }}</h4>
+            <h3>{{ collection.name }}</h3>
             <p>{{ collection.description }}</p>
         </a>
         {% endfor %}
@@ -84,13 +84,11 @@
 </section>
 
 <section class="recent-docs" aria-labelledby="recentes-titulo">
-    <h3 id="recentes-titulo">Adições recentes</h3>
+    <h2 id="recentes-titulo">Adições recentes</h2>
     <div class="doc-list">
         {% for doc in recent_docs %}
         <article class="doc-item">
-            <a href="{% url 'catalog:document_detail' doc.code %}">
-                <h4>{{ doc.title }}</h4>
-            </a>
+            <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
             <p class="doc-meta">
                 {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
                 {% if doc.source %} — {{ doc.source }}{% endif %}

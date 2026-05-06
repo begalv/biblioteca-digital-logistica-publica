@@ -1,7 +1,9 @@
-{# Banner de Acesso à Informação (LAI) — Lei nº 12.527/2011 e
-   Decreto Federal nº 7.724/2012, art. 7º, exigem "banner na página
-   inicial, que dará acesso à seção específica" de transparência.
-   Exibido na home, após o hero e antes de coleções. #}
+{% comment %}
+Banner de Acesso à Informação (LAI) — Lei nº 12.527/2011 e
+Decreto Federal nº 7.724/2012, art. 7º, exigem banner na página
+inicial dando acesso à seção específica de transparência.
+Exibido na home, após o hero e antes das coleções.
+{% endcomment %}
 <aside class="sp-banner-lai" role="region" aria-label="Acesso à Informação">
   <a href="{% url 'catalog:transparencia' %}" class="sp-banner-lai__link">
     <span class="sp-banner-lai__icone" aria-hidden="true">

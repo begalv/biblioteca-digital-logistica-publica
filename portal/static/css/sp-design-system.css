@@ -46,51 +46,86 @@
 }
 
 /* ------------------------------------------------------------
-   Modo alto contraste (WCAG AAA) — toggle pela barra GovSP
-   Ativado via classe body.sp-alto-contraste (set por main.js)
+   Modo alto contraste (WCAG AAA) — toggle pela barra GovSP.
+   Estratégia: seletor universal com !important sobrescreve
+   QUALQUER cor explícita (color: var(--sp-preto), --sp-azul,
+   --sp-vermelho etc.) que componentes individuais tenham
+   declarado. SVGs e imagens são preservadas via :not().
    ------------------------------------------------------------ */
 body.sp-alto-contraste {
     background: var(--sp-preto) !important;
     color: var(--sp-amarelo) !important;
 }
 
+/* Força amarelo sobre preto em TODOS os elementos textuais.
+   :not() preserva SVG (e seu interior) e imagens — elas têm
+   tratamento próprio abaixo. */
+body.sp-alto-contraste *:not(svg):not(svg *):not(img) {
+    background-color: var(--sp-preto) !important;
+    background-image: none !important;
+    color: var(--sp-amarelo) !important;
+    border-color: var(--sp-amarelo) !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+/* Links: amarelo sublinhado por padrão; invertem no hover/foco. */
 body.sp-alto-contraste a,
-body.sp-alto-contraste a:visited {
+body.sp-alto-contraste a:visited,
+body.sp-alto-contraste a *:not(svg):not(svg *) {
     color: var(--sp-amarelo) !important;
     text-decoration: underline !important;
 }
 
 body.sp-alto-contraste a:hover,
-body.sp-alto-contraste a:focus {
-    background: var(--sp-amarelo) !important;
+body.sp-alto-contraste a:focus,
+body.sp-alto-contraste a:focus-visible,
+body.sp-alto-contraste a:hover *,
+body.sp-alto-contraste a:focus *,
+body.sp-alto-contraste button:hover,
+body.sp-alto-contraste button:focus-visible,
+body.sp-alto-contraste [aria-current="page"] {
+    background-color: var(--sp-amarelo) !important;
     color: var(--sp-preto) !important;
-}
-
-body.sp-alto-contraste header,
-body.sp-alto-contraste main,
-body.sp-alto-contraste footer,
-body.sp-alto-contraste section,
-body.sp-alto-contraste article,
-body.sp-alto-contraste .card,
-body.sp-alto-contraste .hero,
-body.sp-alto-contraste .doc-item,
-body.sp-alto-contraste .result-item,
-body.sp-alto-contraste .search-filters,
-body.sp-alto-contraste .metadata-table,
-body.sp-alto-contraste .metadata-table th,
-body.sp-alto-contraste .metadata-table td {
-    background: var(--sp-preto) !important;
-    color: var(--sp-amarelo) !important;
     border-color: var(--sp-amarelo) !important;
 }
 
+/* Inputs e botões com borda visível e cursor amigável. */
+body.sp-alto-contraste input,
+body.sp-alto-contraste select,
+body.sp-alto-contraste textarea,
+body.sp-alto-contraste button {
+    background-color: var(--sp-preto) !important;
+    color: var(--sp-amarelo) !important;
+    border: 2px solid var(--sp-amarelo) !important;
+}
+
+body.sp-alto-contraste ::placeholder {
+    color: var(--sp-amarelo) !important;
+    opacity: 0.7;
+}
+
+/* SVG inline herdam currentColor (= amarelo) automaticamente
+   porque os ícones do sprite usam fill="currentColor"/
+   stroke="currentColor". Explicitamos para clareza. */
+body.sp-alto-contraste svg {
+    color: var(--sp-amarelo) !important;
+}
+
+/* Foco visível em branco — máximo contraste contra amarelo. */
 body.sp-alto-contraste *:focus-visible {
-    outline: 3px solid var(--sp-branco);
+    outline: 3px solid var(--sp-branco) !important;
     outline-offset: 2px;
 }
 
+/* Imagens: grayscale alto contraste para preservar identificação
+   sem competir com a paleta. */
 body.sp-alto-contraste img:not([alt=""]) {
-    filter: grayscale(100%) contrast(1.2);
+    filter: grayscale(100%) contrast(1.4) brightness(1.2) !important;
+}
+
+body.sp-alto-contraste img[alt=""] {
+    opacity: 0.4 !important;
 }
 
 /* ------------------------------------------------------------
@@ -114,13 +149,16 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     overflow: hidden;
 }
 
+/* IMPORTANTE: NÃO definir `fill` ou `stroke` aqui. Os <symbol>s do
+   sprite usam atributos inline (fill="none" / stroke="currentColor")
+   para distinguir ícones outline de ícones preenchidos. CSS sobrescreve
+   presentation attributes, então setar fill/stroke aqui transforma
+   outlines em blocos sólidos. */
 .sp-icon {
     display: inline-block;
     width: 1em;
     height: 1em;
     vertical-align: -0.125em;
-    fill: currentColor;
-    stroke: currentColor;
 }
 
 /* ------------------------------------------------------------
@@ -159,19 +197,6 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     display: block;
 }
 
-.sp-barra-govsp__link {
-    color: var(--sp-branco);
-    text-decoration: none;
-    padding: 0.25rem 0.5rem;
-    font-weight: 500;
-}
-
-.sp-barra-govsp__link:hover,
-.sp-barra-govsp__link:focus-visible {
-    text-decoration: underline;
-    color: var(--sp-amarelo);
-}
-
 .sp-barra-govsp__redes {
     list-style: none;
     margin: 0;
@@ -194,8 +219,8 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-barra-govsp__redes a:hover,
 .sp-barra-govsp__redes a:focus-visible {
-    background: rgba(255, 255, 255, 0.15);
-    color: var(--sp-amarelo);
+    background: var(--sp-vermelho);
+    color: var(--sp-branco);
 }
 
 .sp-a11y-controls {
@@ -226,18 +251,17 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-a11y-btn:hover,
 .sp-a11y-btn:focus-visible {
-    background: rgba(255, 255, 255, 0.15);
-    color: var(--sp-amarelo);
+    background: var(--sp-vermelho);
+    color: var(--sp-branco);
 }
 
 .sp-a11y-btn[aria-pressed="true"] {
-    background: var(--sp-amarelo);
+    background: var(--sp-branco);
     color: var(--sp-preto);
 }
 
 @media (max-width: 575.98px) {
     .sp-barra-govsp__inner { padding: 0.4rem 0.75rem; gap: 0.5rem; }
-    .sp-barra-govsp__link { display: none; }
     .sp-barra-govsp__redes { gap: 0; }
     .sp-barra-govsp__redes a { width: 26px; height: 26px; }
     .sp-a11y-controls { padding-left: 0.5rem; margin-left: 0.25rem; }
@@ -259,82 +283,17 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 /* ------------------------------------------------------------
-   Header institucional do Portal BDLP (Manual GESP v1.6, Cap. 2)
-   Linha 1: assinatura institucional (logos parceiros)
-   Linha 2: faixa azul com título do portal e busca rápida
+   Header institucional — faixa única branca + accent vermelho
+   Manual GESP v1.6: vermelho (Pantone 485) é a cor de identidade;
+   azul/amarelo/verde são acessórios. Header não usa fundo colorido.
    ------------------------------------------------------------ */
 .sp-header {
     background: var(--sp-branco);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-bottom: 4px solid var(--sp-vermelho);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.sp-header__assinatura {
-    background: var(--sp-branco);
-    border-bottom: 1px solid var(--sp-cinza-claro);
-}
-
-.sp-header__assinatura-inner {
-    max-width: var(--container-max);
-    margin-inline: auto;
-    padding: 1rem var(--container-padding);
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.sp-header__home {
-    text-decoration: none;
-    color: inherit;
-    display: inline-flex;
-    align-items: center;
-}
-
-.sp-header__home:hover,
-.sp-header__home:focus-visible {
-    text-decoration: none;
-}
-
-.sp-header__logos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0;
-}
-
-.sp-header__logo-item {
-    display: inline-flex;
-    align-items: center;
-    height: 56px;
-    padding: 0 1.25rem;
-    border-right: 1px solid var(--sp-cinza-claro);
-}
-
-.sp-header__logo-item:last-child {
-    border-right: none;
-    padding-right: 0;
-}
-
-.sp-header__logo-item:first-child {
-    padding-left: 0;
-}
-
-.sp-header__logo-item img {
-    max-height: 52px;
-    width: auto;
-    object-fit: contain;
-}
-
-/* Faixa azul institucional com título e busca */
-.sp-header__faixa-portal {
-    background: var(--sp-azul);
-    color: var(--sp-branco);
-}
-
-.sp-header__faixa-inner {
+.sp-header__inner {
     max-width: var(--container-max);
     margin-inline: auto;
     padding: 1rem var(--container-padding);
@@ -345,31 +304,77 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     justify-content: space-between;
 }
 
-.sp-header__titulo {
-    color: var(--sp-branco);
+.sp-header__home {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
     text-decoration: none;
+    color: inherit;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.sp-header__home:hover,
+.sp-header__home:focus-visible {
+    text-decoration: none;
+}
+
+.sp-header__home:hover .sp-header__brand-portal {
+    color: var(--sp-vermelho);
+}
+
+.sp-header__logos {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+.sp-header__logo {
+    width: auto;
+    flex-shrink: 0;
+    display: block;
+}
+
+.sp-header__logo--gov {
+    height: 36px;
+}
+
+.sp-header__logo--lilp {
+    height: 64px;  /* logo quase quadrado, precisa mais altura para equivaler ao GovSP visualmente */
+}
+
+.sp-header__divider {
+    width: 1px;
+    height: 64px;
+    background: var(--sp-cinza-claro);
+    flex-shrink: 0;
+}
+
+.sp-header__brand {
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
+    min-width: 0;
 }
 
-.sp-header__titulo:hover,
-.sp-header__titulo:focus-visible {
-    color: var(--sp-branco);
-    text-decoration: none;
-}
-
-.sp-header__titulo-principal {
-    font-family: var(--sp-fonte-titulos);
-    font-size: 1.5rem;
-    font-weight: 700;
+.sp-header__brand-secretariat {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    color: var(--sp-cinza-escuro);
     line-height: 1.2;
 }
 
-.sp-header__titulo-sub {
-    font-size: var(--fs-small);
-    font-weight: 400;
-    opacity: 0.9;
+.sp-header__brand-portal {
+    font-family: var(--sp-fonte-titulos);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--sp-preto);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    transition: color 0.15s;
 }
 
 /* Form de busca rápida */
@@ -377,18 +382,17 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     display: flex;
     align-items: stretch;
     background: var(--sp-branco);
+    border: 2px solid var(--sp-cinza-claro);
     border-radius: 4px;
     overflow: hidden;
-    min-width: 320px;
-    max-width: 480px;
-    flex: 1 1 320px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    flex: 0 1 360px;
+    min-width: 240px;
 }
 
 .sp-header__busca input[type="search"] {
     flex: 1;
     border: none;
-    padding: 0.6rem 0.85rem;
+    padding: 0.55rem 0.85rem;
     font-size: var(--fs-body);
     font-family: inherit;
     color: var(--sp-texto-corpo);
@@ -401,15 +405,16 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 .sp-header__busca:focus-within {
+    border-color: var(--sp-foco);
     outline: 3px solid var(--sp-foco);
-    outline-offset: 2px;
+    outline-offset: 0;
 }
 
 .sp-header__busca-btn {
     appearance: none;
     border: none;
-    background: var(--sp-amarelo);
-    color: var(--sp-preto);
+    background: var(--sp-vermelho);
+    color: var(--sp-branco);
     padding: 0 1rem;
     cursor: pointer;
     font-size: 1.15rem;
@@ -420,19 +425,17 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-header__busca-btn:hover,
 .sp-header__busca-btn:focus-visible {
-    background: var(--sp-azul-escuro);
+    background: var(--sp-preto);
     color: var(--sp-branco);
 }
 
 @media (max-width: 767.98px) {
-    .sp-header__assinatura-inner { justify-content: center; padding: 0.75rem var(--container-padding); }
-    .sp-header__logos { justify-content: center; }
-    .sp-header__logo-item { height: 44px; padding: 0 0.6rem; }
-    .sp-header__logo-item img { max-height: 40px; }
-    .sp-header__faixa-inner { flex-direction: column; align-items: stretch; gap: 0.85rem; }
-    .sp-header__titulo-principal { font-size: 1.2rem; }
-    .sp-header__titulo-sub { font-size: 0.8rem; }
-    .sp-header__busca { min-width: 0; max-width: none; }
+    .sp-header__inner { flex-direction: column; align-items: stretch; gap: 0.85rem; }
+    .sp-header__home { justify-content: flex-start; }
+    .sp-header__divider { height: 32px; }
+    .sp-header__brand-portal { font-size: 1.1rem; }
+    .sp-header__brand-secretariat { font-size: 0.7rem; }
+    .sp-header__busca { flex: 1 1 100%; min-width: 0; }
 }
 
 /* ------------------------------------------------------------
@@ -458,7 +461,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     appearance: none;
     background: transparent;
     border: none;
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     padding: 0.85rem 1rem;
     cursor: pointer;
     font-family: inherit;
@@ -486,7 +489,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     display: inline-flex;
     align-items: center;
     padding: 0.85rem 1rem;
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     text-decoration: none;
     font-weight: 500;
     border-bottom: 3px solid transparent;
@@ -496,14 +499,14 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 .sp-menu-principal__lista a:hover,
 .sp-menu-principal__lista a:focus-visible {
     background: var(--sp-branco);
-    color: var(--sp-azul-escuro);
-    border-bottom-color: var(--sp-amarelo);
+    color: var(--sp-vermelho);
+    border-bottom-color: var(--sp-vermelho);
     text-decoration: none;
 }
 
 .sp-menu-principal__lista a[aria-current="page"] {
-    color: var(--sp-azul-escuro);
-    border-bottom-color: var(--sp-amarelo);
+    color: var(--sp-vermelho);
+    border-bottom-color: var(--sp-vermelho);
     font-weight: 700;
 }
 
@@ -549,7 +552,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     .sp-menu-principal__lista a:focus-visible,
     .sp-menu-principal__lista a[aria-current="page"] {
         border-bottom-color: transparent;
-        border-left-color: var(--sp-amarelo);
+        border-left-color: var(--sp-vermelho);
     }
 }
 
@@ -567,11 +570,12 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     padding: 0 var(--container-padding);
 }
 
-/* Faixa 1 — fundo azul institucional */
+/* Faixa 1 — fundo escuro com accent vermelho (Manual GESP v1.6) */
 .sp-rodape__faixa-links {
-    background: var(--sp-azul);
+    background: #1A1A1A;
     color: var(--sp-branco);
     padding: 2.5rem 0 2rem;
+    border-top: 4px solid var(--sp-vermelho);
 }
 
 .sp-rodape__colunas {
@@ -587,7 +591,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     letter-spacing: 0.03em;
     margin-bottom: 0.85rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--sp-amarelo);
+    border-bottom: 2px solid var(--sp-vermelho);
 }
 
 .sp-rodape__coluna ul {
@@ -609,7 +613,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-rodape__coluna a:hover,
 .sp-rodape__coluna a:focus-visible {
-    color: var(--sp-amarelo);
+    color: var(--sp-branco);
     text-decoration: underline;
     opacity: 1;
 }
@@ -666,9 +670,9 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     flex-direction: column;
     align-items: center;
     text-align: center;
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     line-height: 1.2;
-    border: 2px solid var(--sp-azul);
+    border: 2px solid var(--sp-vermelho);
     border-radius: 4px;
     padding: 0.4rem 0.85rem;
     font-size: 0.75rem;
@@ -722,7 +726,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-rodape__final-links a:hover,
 .sp-rodape__final-links a:focus-visible {
-    color: var(--sp-amarelo);
+    color: var(--sp-branco);
     text-decoration: underline;
 }
 
@@ -741,32 +745,6 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 /* ------------------------------------------------------------
-   Aviso de rascunho — faixa amarela no topo das páginas legais
-   pendentes de validação jurídica
-   ------------------------------------------------------------ */
-.sp-aviso-rascunho {
-    background: var(--sp-amarelo);
-    color: var(--sp-preto);
-    padding: 0.85rem 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: 4px;
-    border-left: 6px solid var(--sp-vermelho);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.sp-aviso-rascunho strong {
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-/* ------------------------------------------------------------
    Páginas institucionais e legais — tipografia legível
    ------------------------------------------------------------ */
 .sp-pagina-legal {
@@ -778,11 +756,11 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 .sp-pagina-legal header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid var(--sp-amarelo);
+    border-bottom: 4px solid var(--sp-vermelho);
 }
 
 .sp-pagina-legal h1 {
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     margin-bottom: 0.5rem;
 }
 
@@ -796,13 +774,15 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 .sp-pagina-legal h2 {
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     margin-bottom: 0.75rem;
     font-size: 1.4rem;
+    border-left: 4px solid var(--sp-vermelho);
+    padding-left: 0.75rem;
 }
 
 .sp-pagina-legal h3 {
-    color: var(--sp-azul-escuro);
+    color: var(--sp-preto);
     margin: 1rem 0 0.5rem;
     font-size: 1.15rem;
 }
@@ -838,7 +818,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     padding: 0.1rem 0.35rem;
     border-radius: 3px;
     font-size: 0.9em;
-    color: var(--sp-azul-escuro);
+    color: var(--sp-preto);
 }
 
 /* Tabela de cookies (politica_cookies.html) */
@@ -859,7 +839,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-tabela-cookies th {
     background: var(--sp-fundo-claro);
-    color: var(--sp-azul-escuro);
+    color: var(--sp-preto);
     font-weight: 700;
 }
 
@@ -877,7 +857,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 /* Fale Conosco — definição de canais */
 .sp-canais-contato dt {
     font-weight: 700;
-    color: var(--sp-azul-escuro);
+    color: var(--sp-preto);
     margin-top: 1rem;
     font-size: 1.05rem;
 }
@@ -887,11 +867,6 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     padding-left: 0;
 }
 
-.sp-canais-contato__nota {
-    font-size: 0.85rem;
-    color: var(--sp-cinza-escuro);
-    margin-top: 0.25rem;
-}
 
 /* ------------------------------------------------------------
    Banner LGPD de cookies — fixo na base, role="region" (não-modal)
@@ -904,10 +879,10 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     left: 0;
     right: 0;
     z-index: 1000;
-    background: var(--sp-azul);
+    background: #1A1A1A;
     color: var(--sp-branco);
-    border-top: 4px solid var(--sp-amarelo);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
+    border-top: 4px solid var(--sp-vermelho);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .sp-banner-cookies[hidden] {
@@ -944,15 +919,15 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 .sp-banner-cookies__texto a {
-    color: var(--sp-amarelo);
+    color: var(--sp-branco);
     text-decoration: underline;
     font-weight: 500;
 }
 
 .sp-banner-cookies__texto a:hover,
 .sp-banner-cookies__texto a:focus-visible {
-    color: var(--sp-branco);
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--sp-vermelho);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .sp-banner-cookies__acoes {
@@ -1010,7 +985,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 .sp-cookies-modal__panel h2 {
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     font-size: 1.35rem;
     margin: 0;
 }
@@ -1033,7 +1008,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 .sp-cookies-modal__fechar:hover,
 .sp-cookies-modal__fechar:focus-visible {
     background: var(--sp-fundo-claro);
-    color: var(--sp-azul);
+    color: var(--sp-vermelho);
 }
 
 .sp-cookies-modal__categoria {
@@ -1045,7 +1020,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-cookies-modal__categoria legend {
     font-weight: 700;
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     padding: 0 0.4rem;
 }
 
@@ -1100,16 +1075,16 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     align-items: center;
     gap: 1.25rem;
     padding: 1rem 1.5rem;
-    background: linear-gradient(90deg, var(--sp-azul) 0%, var(--sp-azul-escuro) 100%);
+    background: var(--sp-preto);
     color: var(--sp-branco);
     text-decoration: none;
-    border-left: 6px solid var(--sp-amarelo);
+    border-left: 6px solid var(--sp-vermelho);
     transition: filter 0.2s, transform 0.2s;
 }
 
 .sp-banner-lai__link:hover,
 .sp-banner-lai__link:focus-visible {
-    filter: brightness(1.1);
+    filter: brightness(1.15);
     color: var(--sp-branco);
     text-decoration: none;
     transform: translateY(-1px);
@@ -1120,8 +1095,8 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--sp-amarelo);
-    color: var(--sp-azul-escuro);
+    background: var(--sp-vermelho);
+    color: var(--sp-branco);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1176,7 +1151,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-stats__item {
     background: var(--sp-fundo-claro);
-    border-left: 4px solid var(--sp-azul);
+    border-left: 4px solid var(--sp-vermelho);
     border-radius: 4px;
     padding: 1rem 1.25rem;
     display: flex;
@@ -1187,8 +1162,8 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 .sp-stats__numero {
     font-family: var(--sp-fonte-titulos);
     font-size: 2.25rem;
-    font-weight: 700;
-    color: var(--sp-azul);
+    font-weight: 900;
+    color: var(--sp-preto);
     line-height: 1;
 }
 
@@ -1216,7 +1191,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 .sp-acesso-rapido h3 {
-    color: var(--sp-azul-escuro);
+    color: var(--sp-preto);
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }
@@ -1226,7 +1201,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     flex-direction: column;
     gap: 0.5rem;
     text-align: left;
-    border-top: 4px solid var(--sp-amarelo);
+    border-top: 4px solid var(--sp-vermelho);
 }
 
 .sp-card-acesso__icone {
@@ -1236,14 +1211,14 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--sp-azul);
+    background: var(--sp-preto);
     color: var(--sp-branco);
     font-size: 1.25rem;
     margin-bottom: 0.4rem;
 }
 
 .sp-card-acesso h4 {
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     margin: 0;
 }
 
@@ -1255,7 +1230,7 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 
 .sp-card-acesso:hover .sp-card-acesso__icone,
 .sp-card-acesso:focus-visible .sp-card-acesso__icone {
-    background: var(--sp-azul-escuro);
+    background: var(--sp-vermelho);
 }
 
 /* ------------------------------------------------------------
@@ -1265,27 +1240,52 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1.5rem;
-    margin: 1.25rem 0 0.75rem;
-    padding: 1rem;
-    background: var(--sp-fundo-claro);
+    justify-content: center;
+    gap: 2.5rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem 1rem;
+    background: var(--sp-branco);
     border-radius: 4px;
     border: 1px solid var(--sp-cinza-claro);
 }
 
 .sp-parceiros-imagens img {
-    max-height: 56px;
-    width: auto;
     object-fit: contain;
+    height: auto;
+}
+
+/* Tamanhos individuais — proporções muito diferentes (governo é horizontal
+   estreito; LILP é quase quadrado; SBU é retangular médio) impedem altura
+   uniforme. Cada logo tem dimensões pensadas para massa visual equivalente. */
+.sp-parceiro-logo--gov {
+    width: 240px;
+    height: 34px;
+}
+
+.sp-parceiro-logo--lilp {
+    width: 138px;
+    height: 120px;
+}
+
+.sp-parceiro-logo--sbu {
+    width: 170px;
+    height: 98px;
+}
+
+@media (max-width: 575.98px) {
+    .sp-parceiros-imagens { gap: 1.5rem; padding: 1rem 0.75rem; }
+    .sp-parceiro-logo--gov { width: 200px; height: 28px; }
+    .sp-parceiro-logo--lilp { width: 110px; height: 96px; }
+    .sp-parceiro-logo--sbu { width: 140px; height: 80px; }
 }
 
 .sp-pagina-legal__cabecalho {
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--sp-amarelo);
+    border-bottom: 4px solid var(--sp-vermelho);
 }
 
 .sp-pagina-legal__cabecalho h1 {
-    color: var(--sp-azul);
+    color: var(--sp-preto);
     margin-bottom: 0.5rem;
 }

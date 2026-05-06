@@ -3,22 +3,34 @@
 {% block title %}Coleções — Biblioteca Digital de Logística Pública{% endblock %}
 
 {% block content %}
-<h2>Coleções</h2>
+<article class="sp-pagina-legal">
+  <header class="sp-pagina-legal__cabecalho">
+    <h1>Coleções</h1>
+    <p class="sp-pagina-legal__intro">
+      O acervo da BDLP está organizado em coleções temáticas que agrupam
+      documentos por sua natureza editorial. Cada coleção pode conter
+      subcoleções e abriga produções científicas, técnicas, jurisprudenciais
+      e normativas sobre logística pública.
+    </p>
+  </header>
 
-<div class="grid grid-2">
+  <div class="grid grid-2">
     {% for item in collection_data %}
-    <div class="card collection-card">
-        <h3><a href="{% url 'catalog:collection_detail' item.topic.id %}">{{ item.topic.name }}</a></h3>
-        <p>{{ item.topic.description }}</p>
-        <p class="collection-count">{{ item.doc_count }} documento{{ item.doc_count|pluralize }}</p>
-        {% if item.subcollections %}
-        <ul class="subcollection-list">
-            {% for sub in item.subcollections %}
-            <li><a href="{% url 'catalog:collection_detail' sub.id %}">{{ sub.name }}</a></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    </div>
+    <a class="card collection-card" href="{% url 'catalog:collection_detail' item.topic.id %}">
+      <h2 class="collection-card__titulo">{{ item.topic.name }}</h2>
+      {% if item.topic.description %}
+      <p>{{ item.topic.description }}</p>
+      {% endif %}
+      <p class="collection-count">{{ item.doc_count }} documento{{ item.doc_count|pluralize }}</p>
+      {% if item.subcollections %}
+      <ul class="subcollection-list" aria-label="Subcoleções de {{ item.topic.name }}">
+        {% for sub in item.subcollections %}
+        <li>{{ sub.name }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </a>
     {% endfor %}
-</div>
+  </div>
+</article>
 {% endblock %}

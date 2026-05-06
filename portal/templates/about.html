@@ -5,133 +5,136 @@
 {% block meta_description %}Conheça a missão do LILP, a parceria SGGD ↔ SBU/Unicamp pelo Convênio nº 02/2025, o acervo e a tecnologia da Biblioteca Digital de Logística Pública.{% endblock %}
 
 {% block content %}
-<article class="about-page">
-    <header class="sp-pagina-legal__cabecalho">
-        <h1>Sobre a Biblioteca Digital de Logística Pública</h1>
-        <p class="sp-pagina-legal__intro">
-            A BDLP é um repositório digital temático que centraliza produções
-            científicas, técnicas, jurisprudenciais e normativas sobre logística
-            pública, com foco na aplicação da Lei nº 14.133/2021.
-        </p>
-    </header>
+<article class="sp-pagina-legal">
+  <header class="sp-pagina-legal__cabecalho">
+    <h1>Sobre a Biblioteca Digital de Logística Pública</h1>
+    <p class="sp-pagina-legal__intro">
+      A BDLP é um repositório digital temático que centraliza produções
+      científicas, técnicas, jurisprudenciais e normativas sobre logística
+      pública, com foco na aplicação da Lei nº 14.133/2021.
+    </p>
+  </header>
 
-    <section>
-        <h3>O Laboratório de Inovação em Logística Pública (LILP)</h3>
-        <p>
-            O LILP foi criado pela <strong>Resolução SGGD nº 38, de 19 de
-            dezembro de 2024</strong>, no âmbito da Secretaria de Gestão e
-            Governo Digital do Estado de São Paulo (SGGD). O laboratório tem
-            como missão promover a inovação em logística pública, abrangendo
-            contratações, gestão de suprimentos e gestão patrimonial — com
-            ênfase na aplicação prática da nova Lei de Licitações e Contratos
-            Administrativos (Lei nº 14.133/2021).
-        </p>
-        <p>
-            Como laboratório, o LILP atua de forma experimental: prototipa
-            soluções, gera evidências, dialoga com a academia e dissemina
-            boas práticas para todo o ecossistema de compras e contratações
-            do Estado.
-        </p>
-    </section>
+  <section>
+    <h2>O Laboratório de Inovação em Logística Pública (LILP)</h2>
+    <p>
+      O LILP foi criado pela <strong>Resolução SGGD nº 38, de 19 de
+      dezembro de 2024</strong>, no âmbito da Secretaria de Gestão e
+      Governo Digital do Estado de São Paulo (SGGD). O laboratório tem
+      como missão promover a inovação em logística pública, abrangendo
+      contratações, gestão de suprimentos e gestão patrimonial — com
+      ênfase na aplicação prática da nova Lei de Licitações e Contratos
+      Administrativos (Lei nº 14.133/2021).
+    </p>
+    <p>
+      Como laboratório, o LILP atua de forma experimental: prototipa
+      soluções, gera evidências, dialoga com a academia e dissemina
+      boas práticas para todo o ecossistema de compras e contratações
+      do Estado.
+    </p>
+  </section>
 
-    <section>
-        <h3>Parceria com a Unicamp / SBU</h3>
-        <p>
-            O Portal BDLP é fruto do <strong>Convênio SGGD nº 02/2025</strong>,
-            firmado entre a SGGD e a Universidade Estadual de Campinas
-            (Unicamp), por meio do <strong>Sistema de Bibliotecas da Unicamp
-            (SBU)</strong>. A parceria estabelece divisão clara de
-            responsabilidades:
-        </p>
-        <ul>
-            <li><strong>SGGD/LILP</strong> — curadoria editorial,
-                operação técnica do portal, divulgação institucional e
-                relacionamento com autores.</li>
-            <li><strong>SBU/Unicamp</strong> — consultoria em catalogação,
-                indexação, padronização de metadados, preservação digital e
-                interoperabilidade com bases acadêmicas.</li>
-        </ul>
-        <p class="sp-parceiros-imagens" aria-label="Logos institucionais">
-            <img src="{% static 'img/logos/sbu-unicamp/sbu-positivo.png' %}"
-                 alt="Sistema de Bibliotecas da Unicamp"
-                 width="120" height="69" loading="lazy">
-            <img src="{% static 'img/logos/lilp/lilp.png' %}"
-                 alt="Laboratório de Inovação em Logística Pública"
-                 width="80" height="69" loading="lazy">
-            <img src="{% static 'img/logos/sggd/logo-footer.png' %}"
-                 alt="Secretaria de Gestão e Governo Digital"
-                 width="200" height="44" loading="lazy">
-        </p>
-    </section>
+  <section>
+    <h2>Parceria com a Unicamp / SBU</h2>
+    <p>
+      O Portal BDLP é fruto do <strong>Convênio SGGD nº 02/2025</strong>,
+      firmado entre a SGGD e a Universidade Estadual de Campinas
+      (Unicamp), por meio do <strong>Sistema de Bibliotecas da Unicamp
+      (SBU)</strong>. A parceria estabelece divisão clara de
+      responsabilidades:
+    </p>
+    <ul>
+      <li><strong>SGGD/LILP</strong> — curadoria editorial,
+        operação técnica do portal, divulgação institucional e
+        relacionamento com autores.</li>
+      <li><strong>SBU/Unicamp</strong> — consultoria em catalogação,
+        indexação, padronização de metadados, preservação digital e
+        interoperabilidade com bases acadêmicas.</li>
+    </ul>
+    <p class="sp-parceiros-imagens" aria-label="Logos institucionais">
+      <img src="{% static 'img/logos/sggd/logo-gov.png' %}"
+           alt="Governo do Estado de São Paulo — Secretaria de Gestão e Governo Digital"
+           width="240" height="34"
+           class="sp-parceiro-logo sp-parceiro-logo--gov" loading="lazy">
+      <img src="{% static 'img/logos/lilp/lilp.png' %}"
+           alt="Laboratório de Inovação em Logística Pública"
+           width="138" height="120"
+           class="sp-parceiro-logo sp-parceiro-logo--lilp" loading="lazy">
+      <img src="{% static 'img/logos/sbu-unicamp/sbu-positivo.png' %}"
+           alt="Sistema de Bibliotecas da Unicamp"
+           width="170" height="98"
+           class="sp-parceiro-logo sp-parceiro-logo--sbu" loading="lazy">
+    </p>
+  </section>
 
-    <section>
-        <h3>Sobre o acervo</h3>
-        <p>
-            O acervo reúne documentos técnicos, acadêmicos, normativos e
-            operacionais relacionados à logística pública, organizados em
-            quatro grandes coleções:
-        </p>
-        <ul>
-            <li><strong>Eventos</strong> — Documentos provenientes de
-                conferências, seminários, workshops e outros eventos.</li>
-            <li><strong>Livros Digitais</strong> — Livros, e-books e
-                publicações digitalizadas.</li>
-            <li><strong>Materiais Pedagógicos</strong> — Apostilas, manuais,
-                relatórios, tutoriais e vídeos.</li>
-            <li><strong>Trabalhos Acadêmicos</strong> — Dissertações, teses
-                e trabalhos de conclusão de curso.</li>
-        </ul>
-        <p>
-            Os documentos são classificados também por tipologia
-            (administrativo, informacional, jurisprudencial, normativo,
-            operacional), etapa do processo licitatório e nível de
-            complexidade — permitindo busca facetada precisa.
-        </p>
-    </section>
+  <section>
+    <h2>Sobre o acervo</h2>
+    <p>
+      O acervo reúne documentos técnicos, acadêmicos, normativos e
+      operacionais relacionados à logística pública, organizados em
+      quatro grandes coleções:
+    </p>
+    <ul>
+      <li><strong>Eventos</strong> — Documentos provenientes de
+        conferências, seminários, workshops e outros eventos.</li>
+      <li><strong>Livros Digitais</strong> — Livros, e-books e
+        publicações digitalizadas.</li>
+      <li><strong>Materiais Pedagógicos</strong> — Apostilas, manuais,
+        relatórios, tutoriais e vídeos.</li>
+      <li><strong>Trabalhos Acadêmicos</strong> — Dissertações, teses
+        e trabalhos de conclusão de curso.</li>
+    </ul>
+    <p>
+      Os documentos são classificados também por tipologia
+      (administrativo, informacional, jurisprudencial, normativo,
+      operacional), etapa do processo licitatório e nível de
+      complexidade — permitindo busca facetada precisa.
+    </p>
+  </section>
 
-    <section>
-        <h3>Tecnologia</h3>
-        <p>
-            A camada de gestão do acervo (ingestão, catalogação, aprovação)
-            utiliza o sistema <strong>Nou-Rau</strong>, software livre
-            desenvolvido pelo SBU/Unicamp. Já o portal público — esta página —
-            é uma aplicação <strong>Django (Python 5.1+)</strong> servida
-            por Gunicorn em container Docker, consumindo a base
-            PostgreSQL 15 do Nou-Rau em modo somente-leitura.
-        </p>
-        <p>
-            A identidade visual segue o
-            <strong>Manual de Identidade Visual do Governo do Estado de São
-            Paulo, versão 1.6 (abril/2023)</strong>, e o portal observa as
-            recomendações do <strong>eMAG 3.1</strong> e da <strong>WCAG 2.0
-            nível AA</strong> em conformidade com o Decreto Estadual
-            nº 67.799/2023 (Estratégia de Governo Digital).
-        </p>
-    </section>
+  <section>
+    <h2>Tecnologia</h2>
+    <p>
+      A camada de gestão do acervo (ingestão, catalogação, aprovação)
+      utiliza o sistema <strong>Nou-Rau</strong>, software livre
+      desenvolvido pelo SBU/Unicamp. Já o portal público — esta página —
+      é uma aplicação <strong>Django (Python 5.1+)</strong> servida
+      por Gunicorn em container Docker, consumindo a base
+      PostgreSQL 15 do Nou-Rau em modo somente-leitura.
+    </p>
+    <p>
+      A identidade visual segue o
+      <strong>Manual de Identidade Visual do Governo do Estado de São
+      Paulo, versão 1.6 (abril/2023)</strong>, e o portal observa as
+      recomendações do <strong>eMAG 3.1</strong> e da <strong>WCAG 2.0
+      nível AA</strong> em conformidade com o Decreto Estadual
+      nº 67.799/2023 (Estratégia de Governo Digital).
+    </p>
+  </section>
 
-    <section>
-        <h3>Marco normativo</h3>
-        <ul>
-            <li>Lei nº 14.133/2021 — Licitações e Contratos Administrativos.</li>
-            <li>Resolução SGGD nº 38/2024 — Institui o LILP.</li>
-            <li>Decreto Estadual nº 67.799/2023 — Estratégia de Governo Digital.</li>
-            <li>Decreto Estadual nº 69.056/2024 — Portal único SP.GOV.BR.</li>
-            <li>Convênio SGGD nº 02/2025 — Parceria SGGD ↔ SBU/Unicamp.</li>
-        </ul>
-    </section>
+  <section>
+    <h2>Marco normativo</h2>
+    <ul>
+      <li>Lei nº 14.133/2021 — Licitações e Contratos Administrativos.</li>
+      <li>Resolução SGGD nº 38/2024 — Institui o LILP.</li>
+      <li>Decreto Estadual nº 67.799/2023 — Estratégia de Governo Digital.</li>
+      <li>Decreto Estadual nº 69.056/2024 — Portal único SP.GOV.BR.</li>
+      <li>Convênio SGGD nº 02/2025 — Parceria SGGD ↔ SBU/Unicamp.</li>
+    </ul>
+  </section>
 
-    <section>
-        <h3>Contato</h3>
-        <p>
-            <strong>Laboratório de Inovação em Logística Pública (LILP)</strong><br>
-            Secretaria de Gestão e Governo Digital — SGGD<br>
-            Av. Morumbi, 4.500 — Morumbi — São Paulo/SP<br>
-            E-mail: <a href="mailto:lilp@sggd.sp.gov.br">lilp@sggd.sp.gov.br</a>
-        </p>
-        <p>
-            Para sugestões, correções e parcerias, utilize a página de
-            <a href="{% url 'catalog:fale_conosco' %}">Fale Conosco</a>.
-        </p>
-    </section>
+  <section>
+    <h2>Contato</h2>
+    <p>
+      <strong>Laboratório de Inovação em Logística Pública (LILP)</strong><br>
+      Secretaria de Gestão e Governo Digital — SGGD<br>
+      Av. Rangel Pestana, 300 — Sé — São Paulo/SP<br>
+      E-mail: <a href="mailto:lab.sggd@sp.gov.br">lab.sggd@sp.gov.br</a>
+    </p>
+    <p>
+      Para sugestões, correções e parcerias, utilize a página de
+      <a href="{% url 'catalog:fale_conosco' %}">Fale Conosco</a>.
+    </p>
+  </section>
 </article>
 {% endblock %}

@@ -1,13 +1,9 @@
-{# Menu principal de navegação — 7 itens conforme prompt institucional.
-   Usa context_processor catalog.site_context para destacar a rota ativa
-   via aria-current="page" (WCAG 2.4.8 / eMAG R1.4).
-   accesskey segue padrão eMAG R6.1: 2=menu (já no skip-link), letras
-   por item para atalhos diretos.
-
-   NOTA: rotas catalog:transparencia, catalog:acessibilidade,
-   catalog:fale_conosco serão criadas no commit das páginas legais.
-   Até lá usamos hrefs diretos que retornarão 404 — o menu não quebra
-   o render do template. #}
+{% comment %}
+Menu principal de navegação — 7 itens conforme prompt institucional.
+Usa context_processor catalog.site_context para destacar a rota ativa
+via aria-current="page" (WCAG 2.4.8 / eMAG R1.4).
+accesskey segue padrão eMAG R6.1.
+{% endcomment %}
 <nav id="sp-menu" class="sp-menu-principal" role="navigation" aria-label="Menu principal">
   <div class="sp-menu-principal__inner">
     <button type="button"
