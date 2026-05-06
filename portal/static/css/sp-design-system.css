@@ -552,3 +552,190 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
         border-left-color: var(--sp-amarelo);
     }
 }
+
+/* ------------------------------------------------------------
+   Rodapé institucional do Portal BDLP — três faixas
+   ------------------------------------------------------------ */
+.sp-rodape {
+    margin-top: auto;
+    font-family: var(--sp-fonte-principal);
+}
+
+.sp-rodape__container {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: 0 var(--container-padding);
+}
+
+/* Faixa 1 — fundo azul institucional */
+.sp-rodape__faixa-links {
+    background: var(--sp-azul);
+    color: var(--sp-branco);
+    padding: 2.5rem 0 2rem;
+}
+
+.sp-rodape__colunas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+}
+
+.sp-rodape__coluna h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--sp-amarelo);
+}
+
+.sp-rodape__coluna ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sp-rodape__coluna li {
+    margin-bottom: 0.4rem;
+    font-size: var(--fs-small);
+}
+
+.sp-rodape__coluna a {
+    color: var(--sp-branco);
+    text-decoration: none;
+    opacity: 0.92;
+}
+
+.sp-rodape__coluna a:hover,
+.sp-rodape__coluna a:focus-visible {
+    color: var(--sp-amarelo);
+    text-decoration: underline;
+    opacity: 1;
+}
+
+.sp-rodape__coluna address {
+    font-style: normal;
+    font-size: var(--fs-small);
+    line-height: 1.6;
+}
+
+.sp-rodape__coluna address p {
+    margin-bottom: 0.5rem;
+}
+
+/* Faixa 2 — selos institucionais sobre branco */
+.sp-rodape__faixa-selos {
+    background: var(--sp-branco);
+    border-top: 1px solid var(--sp-cinza-claro);
+    border-bottom: 1px solid var(--sp-cinza-claro);
+    padding: 1.25rem 0;
+}
+
+.sp-rodape__selos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.sp-rodape__selos li {
+    display: inline-flex;
+    align-items: center;
+}
+
+.sp-rodape__selos img {
+    max-height: 40px;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(20%);
+    opacity: 0.95;
+    transition: filter 0.2s, opacity 0.2s;
+}
+
+.sp-rodape__selos img:hover {
+    filter: none;
+    opacity: 1;
+}
+
+.sp-rodape__selo-texto {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--sp-azul);
+    line-height: 1.2;
+    border: 2px solid var(--sp-azul);
+    border-radius: 4px;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.75rem;
+}
+
+.sp-rodape__selo-texto strong {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.sp-rodape__selo-texto span {
+    display: block;
+    color: var(--sp-cinza-escuro);
+}
+
+/* Faixa 3 — barra preta final */
+.sp-rodape__faixa-final {
+    background: var(--sp-preto);
+    color: var(--sp-branco);
+    padding: 0.85rem 0;
+    font-size: var(--fs-small);
+}
+
+.sp-rodape__final-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.sp-rodape__copy {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.sp-rodape__final-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 1.25rem;
+}
+
+.sp-rodape__final-links a {
+    color: var(--sp-branco);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.sp-rodape__final-links a:hover,
+.sp-rodape__final-links a:focus-visible {
+    color: var(--sp-amarelo);
+    text-decoration: underline;
+}
+
+@media (max-width: 991.98px) {
+    .sp-rodape__colunas {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .sp-rodape__faixa-links { padding: 2rem 0 1.5rem; }
+    .sp-rodape__colunas { grid-template-columns: 1fr; gap: 1.25rem; }
+    .sp-rodape__selos { gap: 1rem; }
+    .sp-rodape__final-inner { flex-direction: column; align-items: center; text-align: center; }
+}

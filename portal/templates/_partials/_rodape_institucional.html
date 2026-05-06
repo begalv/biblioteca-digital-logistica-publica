@@ -1,0 +1,110 @@
+{# Rodapé institucional do Portal BDLP — três faixas:
+   1) Faixa azul: 4 colunas de links institucionais
+   2) Faixa branca: selos de parceiros (SBU, LILP, SGGD, Governo SP) +
+      selo "Acessibilidade WCAG 2.0 AA / eMAG 3.1" e "LGPD"
+   3) Barra preta final: © ano + Ouvidoria/Transparência/SIC (URLs do
+      ecossistema GovSP, exatos de compras.sp.gov.br).
+   site_year é injetado pelo context_processor catalog.site_context. #}
+{% load static %}
+<footer id="sp-rodape" class="sp-rodape" role="contentinfo">
+  {# ===== Faixa 1 — links institucionais ===== #}
+  <div class="sp-rodape__faixa-links">
+    <div class="sp-rodape__container">
+      <div class="sp-rodape__colunas">
+        <div class="sp-rodape__coluna">
+          <h2 class="sp-rodape__titulo">Sobre</h2>
+          <ul>
+            <li><a href="{% url 'catalog:about' %}">Sobre a BDLP</a></li>
+            <li><a href="https://www.sggd.sp.gov.br/laboratorio-de-inovacao-em-logistica-publica/" target="_blank" rel="noopener noreferrer">LILP <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="https://www.sggd.sp.gov.br/" target="_blank" rel="noopener noreferrer">SGGD <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="/transparencia/#convenio">Convênio SGGD nº 02/2025</a></li>
+          </ul>
+        </div>
+
+        <div class="sp-rodape__coluna">
+          <h2 class="sp-rodape__titulo">Acervo</h2>
+          <ul>
+            <li><a href="{% url 'catalog:search' %}">Buscar no acervo</a></li>
+            <li><a href="{% url 'catalog:collection_list' %}">Coleções</a></li>
+            <li><a href="{% url 'catalog:search' %}?tipologia=Normativo">Normativos</a></li>
+            <li><a href="{% url 'catalog:search' %}?tipologia=Jurisprudencial">Jurisprudência</a></li>
+          </ul>
+        </div>
+
+        <div class="sp-rodape__coluna">
+          <h2 class="sp-rodape__titulo">Transparência e Cidadania</h2>
+          <ul>
+            <li><a href="/transparencia/">Acesso à Informação (LAI)</a></li>
+            <li><a href="https://www.ouvidoria.sp.gov.br/" target="_blank" rel="noopener noreferrer">Ouvidoria SP <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="http://www.transparencia.sp.gov.br/" target="_blank" rel="noopener noreferrer">Portal da Transparência <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="http://www.sic.sp.gov.br/" target="_blank" rel="noopener noreferrer">SIC <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="/politica-de-privacidade/">Política de Privacidade</a></li>
+            <li><a href="/politica-de-cookies/">Política de Cookies</a></li>
+            <li><a href="/acessibilidade/">Acessibilidade</a></li>
+            <li><a href="/mapa-do-site/">Mapa do site</a></li>
+          </ul>
+        </div>
+
+        <div class="sp-rodape__coluna">
+          <h2 class="sp-rodape__titulo">Contato</h2>
+          <address>
+            <p><a href="mailto:lilp@sggd.sp.gov.br">lilp@sggd.sp.gov.br</a></p>
+            <p>Av. Morumbi, 4.500<br>Morumbi — São Paulo/SP</p>
+            <p><a href="/fale-conosco/">Fale Conosco</a></p>
+          </address>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ===== Faixa 2 — selos institucionais ===== #}
+  <div class="sp-rodape__faixa-selos">
+    <div class="sp-rodape__container">
+      <ul class="sp-rodape__selos" aria-label="Parceiros e selos de conformidade">
+        <li>
+          <img src="{% static 'img/logos/sbu-unicamp/sbu-positivo.png' %}"
+               alt="Sistema de Bibliotecas da Unicamp"
+               width="70" height="40" loading="lazy" decoding="async">
+        </li>
+        <li>
+          <img src="{% static 'img/logos/lilp/lilp.png' %}"
+               alt="Laboratório de Inovação em Logística Pública"
+               width="48" height="42" loading="lazy" decoding="async">
+        </li>
+        <li>
+          <img src="{% static 'img/logos/sggd/logo-footer.png' %}"
+               alt="Secretaria de Gestão e Governo Digital"
+               width="180" height="40" loading="lazy" decoding="async">
+        </li>
+        <li>
+          <img src="{% static 'img/logos/governo-sp/logo-governo-sp-rodape.png' %}"
+               alt="Governo do Estado de São Paulo"
+               width="140" height="26" loading="lazy" decoding="async">
+        </li>
+        <li class="sp-rodape__selo-texto" aria-label="Conformidade WCAG 2.0 AA e eMAG 3.1">
+          <strong>WCAG 2.0 AA</strong>
+          <span>eMAG 3.1</span>
+        </li>
+        <li class="sp-rodape__selo-texto" aria-label="Conformidade LGPD">
+          <strong>LGPD</strong>
+          <span>Lei 13.709/2018</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  {# ===== Faixa 3 — barra final © + Ouvidoria/Transparência/SIC ===== #}
+  <div class="sp-rodape__faixa-final">
+    <div class="sp-rodape__container sp-rodape__final-inner">
+      <p class="sp-rodape__copy">
+        © {{ site_year|default:"2026" }} Governo do Estado de São Paulo —
+        Secretaria de Gestão e Governo Digital
+      </p>
+      <ul class="sp-rodape__final-links" aria-label="Canais oficiais do Governo de SP">
+        <li><a href="https://www.ouvidoria.sp.gov.br/" target="_blank" rel="noopener noreferrer">Ouvidoria</a></li>
+        <li><a href="http://www.transparencia.sp.gov.br/" target="_blank" rel="noopener noreferrer">Transparência</a></li>
+        <li><a href="http://www.sic.sp.gov.br/" target="_blank" rel="noopener noreferrer">SIC</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
