@@ -1,0 +1,103 @@
+{# Banner de cookies LGPD — exibido até o usuário registrar uma escolha
+   (em localStorage sob chave sp-lgpd-consent). Conformidade Lei
+   13.709/2018 (LGPD) e Marco Civil (Lei 12.965/2014).
+
+   IMPORTANTE: usa role="region" + aria-label (NÃO role="dialog" com
+   aria-modal=true) para evitar bloquear navegação por teclado/leitor
+   de tela. Foco não fica preso. Banner pode ser ignorado e o portal
+   continua plenamente navegável. #}
+
+<aside id="sp-banner-cookies"
+       class="sp-banner-cookies"
+       role="region"
+       aria-label="Aviso de cookies"
+       data-cookies-banner
+       hidden>
+  <div class="sp-banner-cookies__inner">
+    <div class="sp-banner-cookies__texto">
+      <h2 class="sp-banner-cookies__titulo">Privacidade e cookies</h2>
+      <p>
+        Este portal utiliza cookies estritamente necessários para o seu
+        funcionamento e, mediante seu consentimento, cookies opcionais
+        para análise agregada de uso, em conformidade com a
+        <strong>Lei nº 13.709/2018 (LGPD)</strong>. Saiba mais na
+        <a href="{% url 'catalog:politica_cookies' %}">Política de Cookies</a>.
+      </p>
+    </div>
+    <div class="sp-banner-cookies__acoes">
+      <button type="button" class="btn btn-primary" data-cookies-action="accept-all">
+        Aceitar todos
+      </button>
+      <button type="button" class="btn btn-secondary" data-cookies-action="essential-only">
+        Apenas essenciais
+      </button>
+      <button type="button" class="btn btn-secondary" data-cookies-action="customize"
+              aria-haspopup="dialog" aria-controls="sp-cookies-modal">
+        Personalizar
+      </button>
+    </div>
+  </div>
+</aside>
+
+{# Modal de personalização — exibido só ao clicar em "Personalizar".
+   Aqui sim é role="dialog" com aria-modal=true, com gestão de foco
+   pelo módulo Cookies em main.js. #}
+<div id="sp-cookies-modal"
+     class="sp-cookies-modal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="sp-cookies-modal-titulo"
+     aria-describedby="sp-cookies-modal-desc"
+     data-cookies-modal
+     hidden>
+  <div class="sp-cookies-modal__backdrop" data-cookies-action="close-modal"></div>
+  <div class="sp-cookies-modal__panel">
+    <header>
+      <h2 id="sp-cookies-modal-titulo">Personalizar cookies</h2>
+      <button type="button"
+              class="sp-cookies-modal__fechar"
+              data-cookies-action="close-modal"
+              aria-label="Fechar personalização de cookies">
+        <svg class="sp-icon" aria-hidden="true" focusable="false"><use href="#icon-fechar"/></svg>
+      </button>
+    </header>
+    <p id="sp-cookies-modal-desc">
+      Escolha quais categorias de cookies opcionais deseja permitir.
+      Cookies estritamente necessários não podem ser desativados pois
+      são indispensáveis ao funcionamento do portal.
+    </p>
+
+    <fieldset class="sp-cookies-modal__categoria">
+      <legend>Estritamente necessários</legend>
+      <label>
+        <input type="checkbox" checked disabled>
+        Sempre ativos — funcionamento básico, segurança e CSRF.
+      </label>
+    </fieldset>
+
+    <fieldset class="sp-cookies-modal__categoria">
+      <legend>Funcionalidades</legend>
+      <label>
+        <input type="checkbox" name="cookie-cat-funcionalidades" data-cookies-cat="funcionalidades">
+        Lembrar minhas preferências (ex.: última coleção visitada).
+      </label>
+    </fieldset>
+
+    <fieldset class="sp-cookies-modal__categoria">
+      <legend>Análise de uso</legend>
+      <label>
+        <input type="checkbox" name="cookie-cat-analytics" data-cookies-cat="analytics">
+        Permitir medição agregada e anônima de visitas (IP truncado).
+      </label>
+    </fieldset>
+
+    <footer>
+      <button type="button" class="btn btn-primary" data-cookies-action="save-customize">
+        Salvar preferências
+      </button>
+      <button type="button" class="btn btn-secondary" data-cookies-action="close-modal">
+        Cancelar
+      </button>
+    </footer>
+  </div>
+</div>

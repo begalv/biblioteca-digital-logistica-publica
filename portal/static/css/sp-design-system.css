@@ -892,3 +892,194 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     color: var(--sp-cinza-escuro);
     margin-top: 0.25rem;
 }
+
+/* ------------------------------------------------------------
+   Banner LGPD de cookies — fixo na base, role="region" (não-modal)
+   para não bloquear navegação por teclado/leitor de tela.
+   Hidden até main.js detectar ausência de consentimento.
+   ------------------------------------------------------------ */
+.sp-banner-cookies {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--sp-azul);
+    color: var(--sp-branco);
+    border-top: 4px solid var(--sp-amarelo);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.sp-banner-cookies[hidden] {
+    display: none !important;
+}
+
+.sp-banner-cookies__inner {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: 1.25rem var(--container-padding);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    justify-content: space-between;
+}
+
+.sp-banner-cookies__texto {
+    flex: 1 1 480px;
+    min-width: 0;
+}
+
+.sp-banner-cookies__titulo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.sp-banner-cookies__texto p {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    margin: 0;
+    opacity: 0.95;
+}
+
+.sp-banner-cookies__texto a {
+    color: var(--sp-amarelo);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.sp-banner-cookies__texto a:hover,
+.sp-banner-cookies__texto a:focus-visible {
+    color: var(--sp-branco);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sp-banner-cookies__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.sp-banner-cookies__acoes .btn {
+    min-width: 140px;
+}
+
+/* ------------------------------------------------------------
+   Modal de personalização de cookies (role="dialog" aria-modal=true)
+   ------------------------------------------------------------ */
+.sp-cookies-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.sp-cookies-modal[hidden] {
+    display: none !important;
+}
+
+.sp-cookies-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.sp-cookies-modal__panel {
+    position: relative;
+    background: var(--sp-branco);
+    color: var(--sp-texto-corpo);
+    max-width: 540px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.sp-cookies-modal__panel header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.sp-cookies-modal__panel h2 {
+    color: var(--sp-azul);
+    font-size: 1.35rem;
+    margin: 0;
+}
+
+.sp-cookies-modal__fechar {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--sp-cinza-claro);
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sp-cinza-escuro);
+    font-size: 1.1rem;
+}
+
+.sp-cookies-modal__fechar:hover,
+.sp-cookies-modal__fechar:focus-visible {
+    background: var(--sp-fundo-claro);
+    color: var(--sp-azul);
+}
+
+.sp-cookies-modal__categoria {
+    border: 1px solid var(--sp-cinza-claro);
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+    margin: 0.85rem 0;
+}
+
+.sp-cookies-modal__categoria legend {
+    font-weight: 700;
+    color: var(--sp-azul);
+    padding: 0 0.4rem;
+}
+
+.sp-cookies-modal__categoria label {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.sp-cookies-modal__categoria input[type="checkbox"] {
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.sp-cookies-modal__categoria input[type="checkbox"]:disabled {
+    cursor: not-allowed;
+}
+
+.sp-cookies-modal__panel footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sp-cinza-claro);
+}
+
+@media (max-width: 767.98px) {
+    .sp-banner-cookies__inner { flex-direction: column; align-items: stretch; }
+    .sp-banner-cookies__acoes { width: 100%; }
+    .sp-banner-cookies__acoes .btn { flex: 1 1 calc(50% - 0.25rem); min-width: 0; }
+}

@@ -205,12 +205,138 @@
     };
 
     /* ========================================================
+       Módulo: Banner de cookies LGPD
+       Aparece se localStorage[STORAGE_KEYS.cookies] estiver vazio.
+       Persiste a escolha como JSON com timestamp e versão da política.
+       Não dispara cookies de análise antes de consentimento explícito.
+       ======================================================== */
+    var CONSENT_VERSION = 1;
+
+    var Cookies = {
+        init: function () {
+            this.banner = document.querySelector('[data-cookies-banner]');
+            this.modal = document.querySelector('[data-cookies-modal]');
+            if (!this.banner) return;
+
+            // Mostra o banner apenas se ainda não houver registro de consentimento
+            // ou se a versão da política tiver mudado.
+            var consent = this.getConsent();
+            if (!consent || consent.versao !== CONSENT_VERSION) {
+                this.exibirBanner();
+            }
+
+            this.bindAcoes();
+        },
+
+        bindAcoes: function () {
+            var self = this;
+            var nodes = document.querySelectorAll('[data-cookies-action]');
+            for (var i = 0; i < nodes.length; i++) {
+                nodes[i].addEventListener('click', function (event) {
+                    var acao = event.currentTarget.getAttribute('data-cookies-action');
+                    self.onAcao(acao, event);
+                });
+            }
+            // Tecla ESC fecha o modal se aberto
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && self.modal && !self.modal.hasAttribute('hidden')) {
+                    self.fecharModal();
+                }
+            });
+        },
+
+        onAcao: function (acao, event) {
+            switch (acao) {
+                case 'accept-all':
+                    this.salvarConsentimento({ funcionalidades: true, analytics: true });
+                    this.ocultarBanner();
+                    break;
+                case 'essential-only':
+                    this.salvarConsentimento({ funcionalidades: false, analytics: false });
+                    this.ocultarBanner();
+                    break;
+                case 'customize':
+                    this.abrirModal();
+                    break;
+                case 'save-customize':
+                    var func = !!document.querySelector('[data-cookies-cat="funcionalidades"]:checked');
+                    var anal = !!document.querySelector('[data-cookies-cat="analytics"]:checked');
+                    this.salvarConsentimento({ funcionalidades: func, analytics: anal });
+                    this.fecharModal();
+                    this.ocultarBanner();
+                    break;
+                case 'close-modal':
+                    this.fecharModal();
+                    break;
+            }
+        },
+
+        exibirBanner: function () {
+            this.banner.removeAttribute('hidden');
+        },
+
+        ocultarBanner: function () {
+            this.banner.setAttribute('hidden', '');
+        },
+
+        abrirModal: function () {
+            if (!this.modal) return;
+            // Preenche checkboxes com valores atuais (se houver)
+            var consent = this.getConsent();
+            var inputs = this.modal.querySelectorAll('[data-cookies-cat]');
+            for (var i = 0; i < inputs.length; i++) {
+                var cat = inputs[i].getAttribute('data-cookies-cat');
+                inputs[i].checked = !!(consent && consent.categorias && consent.categorias[cat]);
+            }
+            this.modal.removeAttribute('hidden');
+            this.previousFocus = document.activeElement;
+            // Foca primeiro elemento focável dentro do modal
+            var primeiro = this.modal.querySelector('button, input, [tabindex]');
+            if (primeiro) primeiro.focus();
+        },
+
+        fecharModal: function () {
+            if (!this.modal) return;
+            this.modal.setAttribute('hidden', '');
+            if (this.previousFocus && this.previousFocus.focus) {
+                this.previousFocus.focus();
+            }
+        },
+
+        getConsent: function () {
+            try {
+                var raw = localStorage.getItem(STORAGE_KEYS.cookies);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (e) {
+                return null;
+            }
+        },
+
+        salvarConsentimento: function (categorias) {
+            var registro = {
+                versao: CONSENT_VERSION,
+                timestamp: new Date().toISOString(),
+                categorias: {
+                    necessarios:     true,
+                    funcionalidades: !!categorias.funcionalidades,
+                    analytics:       !!categorias.analytics
+                }
+            };
+            try {
+                localStorage.setItem(STORAGE_KEYS.cookies, JSON.stringify(registro));
+            } catch (e) { /* localStorage indisponível */ }
+        }
+    };
+
+    /* ========================================================
        Inicialização
        ======================================================== */
     function init() {
         try { A11y.init(); }    catch (e) { console.error('[BDLP] A11y init falhou:', e); }
         try { Atalhos.init(); } catch (e) { console.error('[BDLP] Atalhos init falhou:', e); }
         try { Menu.init(); }    catch (e) { console.error('[BDLP] Menu init falhou:', e); }
+        try { Cookies.init(); } catch (e) { console.error('[BDLP] Cookies init falhou:', e); }
     }
 
     if (document.readyState === 'loading') {
