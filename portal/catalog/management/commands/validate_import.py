@@ -21,6 +21,14 @@ class Command(BaseCommand):
             ("Categorias", "SELECT COUNT(*) FROM nr_category"),
             ("Tipos de informação", "SELECT COUNT(*) FROM type_information"),
             ("Formatos", "SELECT COUNT(*) FROM nr_format"),
+            ("Assuntos", "SELECT COUNT(*) FROM nr_assunto"),
+            ("Subcategorias", "SELECT COUNT(*) FROM nr_subcategoria"),
+            ("Microcategorias", "SELECT COUNT(*) FROM nr_microcategoria"),
+            ("Documentos com assunto", "SELECT COUNT(*) FROM nr_document WHERE assunto_id IS NOT NULL AND status = 'a'"),
+            ("Documentos com subcategoria", "SELECT COUNT(*) FROM nr_document WHERE subcategoria_id IS NOT NULL AND status = 'a'"),
+            ("Documentos com microcategoria", "SELECT COUNT(*) FROM nr_document WHERE microcategoria_id IS NOT NULL AND status = 'a'"),
+            ("Documentos com ano", "SELECT COUNT(*) FROM nr_document WHERE ano IS NOT NULL AND status = 'a'"),
+            ("Documentos com permissão", "SELECT COUNT(*) FROM nr_document WHERE permissao IS NOT NULL AND permissao != '' AND status = 'a'"),
         ]
 
         self.stdout.write(self.style.SUCCESS("=== Validação de Importação ===\n"))
@@ -84,5 +92,56 @@ class Command(BaseCommand):
             self.stdout.write("\n  Documentos por categoria:")
             for name, count in cursor.fetchall():
                 self.stdout.write(f"    {name}: {count}")
+
+            # Documentos por assunto
+            cursor.execute(
+                """
+                SELECT a.nome, COUNT(d.id)
+                FROM nr_assunto a
+                LEFT JOIN nr_document d ON d.assunto_id = a.id AND d.status = 'a'
+                GROUP BY a.nome
+                ORDER BY COUNT(d.id) DESC
+                """
+            )
+            self.stdout.write("\n  Documentos por assunto:")
+            for name, count in cursor.fetchall():
+                self.stdout.write(f"    {name}: {count}")
+
+            # Distribuição por permissão
+            cursor.execute(
+                """
+                SELECT COALESCE(permissao, '(vazio)') AS perm, COUNT(*)
+                FROM nr_document
+                WHERE status = 'a'
+                GROUP BY perm
+                ORDER BY perm
+                """
+            )
+            self.stdout.write("\n  Documentos por permissão:")
+            for perm, count in cursor.fetchall():
+                self.stdout.write(f"    {perm}: {count}")
+
+            # Documentos por ano (top 10)
+            cursor.execute(
+                """
+                SELECT ano, COUNT(*)
+                FROM nr_document
+                WHERE status = 'a' AND ano IS NOT NULL
+                GROUP BY ano
+                ORDER BY ano DESC
+                LIMIT 10
+                """
+            )
+            self.stdout.write("\n  Documentos por ano (top 10 mais recentes):")
+            for ano, count in cursor.fetchall():
+                self.stdout.write(f"    {ano}: {count}")
+
+            # Documentos sem ano
+            cursor.execute(
+                "SELECT COUNT(*) FROM nr_document WHERE ano IS NULL AND status = 'a'"
+            )
+            sem_ano = cursor.fetchone()[0]
+            if sem_ano:
+                self.stdout.write(self.style.WARNING(f"\n  Documentos sem ano: {sem_ano}"))
 
         self.stdout.write(self.style.SUCCESS("\n=== Validação concluída ==="))

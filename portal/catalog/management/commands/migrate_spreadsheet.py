@@ -126,10 +126,18 @@ class Command(BaseCommand):
             topic_map = self._load_topic_map(conn)
             category_map = self._load_category_map(conn)
             type_info_map = self._load_type_information_map(conn)
+            assunto_map = self._load_assunto_map(conn)
+            subcategoria_map = self._load_subcategoria_map(conn)
+            microcategoria_map = self._load_microcategoria_map(conn)
 
             self.stdout.write(f"Coleções raiz: {[k for k, v in topic_map.items() if v['parent_id'] == 0]}")
             self.stdout.write(f"Categorias: {len(category_map)}")
             self.stdout.write(f"Tipos de informação: {len(type_info_map)}")
+            self.stdout.write(
+                f"Taxonomia: {len(assunto_map)} assuntos, "
+                f"{len(subcategoria_map)} subcategorias, "
+                f"{len(microcategoria_map)} microcategorias"
+            )
 
             global_seq = 1  # Contador global de código
             total_inserted = 0
@@ -184,6 +192,15 @@ class Command(BaseCommand):
                         type_info_id = self._resolve_type_information(
                             record.get("tipo_informacao", ""), type_info_map
                         )
+                        assunto_id = self._resolve_assunto(
+                            record.get("assunto", ""), assunto_map
+                        )
+                        subcategoria_id = self._resolve_subcategoria(
+                            record.get("subcategoria", ""), category_id, subcategoria_map
+                        )
+                        microcategoria_id = self._resolve_microcategoria(
+                            record.get("microcategoria", ""), subcategoria_id, microcategoria_map
+                        )
 
                         if dry_run:
                             title_preview = record["title"][:80]
@@ -193,7 +210,11 @@ class Command(BaseCommand):
                             continue
 
                         code = generate_code(global_seq)
-                        self._insert_document(conn, record, code, topic_id, category_id, type_info_id)
+                        self._insert_document(
+                            conn, record, code,
+                            topic_id, category_id, type_info_id,
+                            assunto_id, subcategoria_id, microcategoria_id,
+                        )
                         sheet_inserted += 1
                         global_seq += 1
 
@@ -273,6 +294,33 @@ class Command(BaseCommand):
                 result[strip_accents(row[1].strip().lower())] = row[0]
         return result
 
+    def _load_assunto_map(self, conn):
+        """Mapeia nome (lower, sem acento)→id em nr_assunto."""
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, nome FROM nr_assunto")
+            rows = cursor.fetchall()
+        return {strip_accents(r[1].strip().lower()): r[0] for r in rows if r[1]}
+
+    def _load_subcategoria_map(self, conn):
+        """Mapeia (category_id, nome_lower_sem_acento)→id em nr_subcategoria."""
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, nome, category_id FROM nr_subcategoria")
+            rows = cursor.fetchall()
+        return {
+            (r[2], strip_accents(r[1].strip().lower())): r[0]
+            for r in rows if r[1]
+        }
+
+    def _load_microcategoria_map(self, conn):
+        """Mapeia (subcategoria_id, nome_lower_sem_acento)→id em nr_microcategoria."""
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, nome, subcategoria_id FROM nr_microcategoria")
+            rows = cursor.fetchall()
+        return {
+            (r[2], strip_accents(r[1].strip().lower())): r[0]
+            for r in rows if r[1]
+        }
+
     def _resolve_topic(self, record, topic_map):
         """Resolve o topic_id pela coluna Coleção (match direto com coleção raiz)."""
         colecao_nome = record.get("colecao", "").strip().lower()
@@ -299,6 +347,44 @@ class Command(BaseCommand):
             if key in cat_key or cat_key in key:
                 return cat_id
         return 7  # Generic fallback
+
+    def _resolve_assunto(self, name, assunto_map):
+        """Resolve assunto_id por nome (case e accent insensitive)."""
+        if not name:
+            return None
+        key = strip_accents(name.strip().lower())
+        return assunto_map.get(key)
+
+    def _resolve_subcategoria(self, name, category_id, sub_map):
+        """Resolve subcategoria_id sob category_id; faz match parcial se necessário."""
+        if not name or not category_id:
+            return None
+        key = strip_accents(name.strip().lower())
+        sub_id = sub_map.get((category_id, key))
+        if sub_id:
+            return sub_id
+        # Match parcial dentro da mesma categoria
+        for (cid, nome_norm), sid in sub_map.items():
+            if cid != category_id:
+                continue
+            if key in nome_norm or nome_norm in key:
+                return sid
+        return None
+
+    def _resolve_microcategoria(self, name, subcategoria_id, mic_map):
+        """Resolve microcategoria_id sob subcategoria_id."""
+        if not name or not subcategoria_id:
+            return None
+        key = strip_accents(name.strip().lower())
+        mic_id = mic_map.get((subcategoria_id, key))
+        if mic_id:
+            return mic_id
+        for (sid, nome_norm), mid in mic_map.items():
+            if sid != subcategoria_id:
+                continue
+            if key in nome_norm or nome_norm in key:
+                return mid
+        return None
 
     def _resolve_type_information(self, tipo_info_name, type_info_map):
         """Resolve type_information id com fallback para NULL."""
@@ -332,7 +418,11 @@ class Command(BaseCommand):
             return type_info_map[alias]
         return None  # Sem match — será gravado como nome cru no campo info
 
-    def _insert_document(self, conn, record, code, topic_id, category_id, type_info_id):
+    def _insert_document(
+        self, conn, record, code,
+        topic_id, category_id, type_info_id,
+        assunto_id=None, subcategoria_id=None, microcategoria_id=None,
+    ):
         """Insere um documento no banco via SQL direto."""
         # Montar description/info com campos auxiliares
         info_parts = []
@@ -347,17 +437,30 @@ class Command(BaseCommand):
         if not autor_principal:
             autor_principal = record.get("author", "")
 
-        # Etapa do processo licitatório: usar Subcategoria
+        # Etapa do processo licitatório: usar Subcategoria como rótulo livre (compatibilidade)
         etapa = record.get("subcategoria", "")[:255] if record.get("subcategoria") else ""
 
-        # Ano: extrair
+        # Ano: extrair como inteiro dedicado (preferir coluna `ano`)
         year_raw = record.get("year", "")
-        year = extract_year(year_raw)
+        year_str = extract_year(year_raw)
+        try:
+            ano_int = int(year_str) if year_str and year_str.isdigit() else None
+        except (TypeError, ValueError):
+            ano_int = None
 
         # Imprenta/source: se vazio, usar Ano
         source = record.get("source", "")
-        if not source and year:
-            source = year
+        if not source and year_str:
+            source = year_str
+
+        # Permissão: 'Aberto' (default), 'Restrito', ou texto cru se outro valor
+        permissao_raw = (record.get("tacesso_raw") or "").strip()
+        if permissao_raw.lower().startswith("aberto"):
+            permissao = "Aberto"
+        elif permissao_raw.lower().startswith("restrito"):
+            permissao = "Restrito"
+        else:
+            permissao = permissao_raw[:20] if permissao_raw else None
 
         with conn.cursor() as cursor:
             cursor.execute(
@@ -371,7 +474,9 @@ class Command(BaseCommand):
                     uso_futuro, metodo, resultado, referencias,
                     description, info, owner_id,
                     typeinformation, typeinform_id,
-                    descricao_fisica, edicao, event_description, capa
+                    descricao_fisica, edicao, event_description, capa,
+                    assunto_id, subcategoria_id, microcategoria_id,
+                    ano, permissao
                 ) VALUES (
                     %s, %s, %s, %s,
                     %s, %s, %s, %s,
@@ -381,7 +486,9 @@ class Command(BaseCommand):
                     %s, %s, %s, %s,
                     %s, %s, 1,
                     %s, %s,
-                    %s, %s, %s, %s
+                    %s, %s, %s, %s,
+                    %s, %s, %s,
+                    %s, %s
                 )
                 """,
                 [
@@ -415,5 +522,10 @@ class Command(BaseCommand):
                     record.get("edicao", "")[:900],
                     record.get("event_description", "")[:5000],
                     record.get("capa", "")[:65],
+                    assunto_id,
+                    subcategoria_id,
+                    microcategoria_id,
+                    ano_int,
+                    permissao,
                 ],
             )

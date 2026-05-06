@@ -3,8 +3,9 @@ from django.core.paginator import Paginator
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404, render
 
+from .facets import compute_facets
 from .models import Document, NrCategory, Topic, TypeInformation
-from .search import search_documents
+from .search import filter_documents, search_documents
 
 
 def home(request):
@@ -22,58 +23,52 @@ def home(request):
     })
 
 
+FILTER_PARAMS = (
+    "topic_id",
+    "category_id",
+    "subcategoria_id",
+    "microcategoria_id",
+    "assunto_id",
+    "tipologia",
+    "etapa",
+    "complexidade",
+    "typeinform_id",
+    "permissao",
+    "ano_min",
+    "ano_max",
+)
+
+
+def _read_filters(request):
+    """Extrai filtros válidos da query string, descartando vazios."""
+    filters = {p: request.GET.get(p) for p in FILTER_PARAMS}
+    return {k: v for k, v in filters.items() if v}
+
+
 def search(request):
-    """Busca full-text com filtros facetados."""
+    """Busca full-text com filtros facetados em cascata."""
     query = request.GET.get("q", "").strip()
     page_number = request.GET.get("page", 1)
-
-    filters = {
-        "topic_id": request.GET.get("topic_id"),
-        "category_id": request.GET.get("category_id"),
-        "tipologia": request.GET.get("tipologia"),
-        "etapa": request.GET.get("etapa"),
-        "complexidade": request.GET.get("complexidade"),
-        "year_from": request.GET.get("year_from"),
-        "year_to": request.GET.get("year_to"),
-        "typeinform_id": request.GET.get("typeinform_id"),
-    }
-    # Limpar filtros vazios
-    filters = {k: v for k, v in filters.items() if v}
+    filters = _read_filters(request)
 
     if query:
         results = search_documents(query, filters if filters else None)
     elif filters:
-        results = Document.objects.filter(status="a")
-        if filters.get("topic_id"):
-            results = results.filter(topic_id=filters["topic_id"])
-        if filters.get("category_id"):
-            results = results.filter(category_id=filters["category_id"])
-        if filters.get("tipologia"):
-            results = results.filter(tipologia=filters["tipologia"])
-        if filters.get("etapa"):
-            results = results.filter(etapa_processo_licitatorio=filters["etapa"])
-        if filters.get("complexidade"):
-            results = results.filter(complexidade=filters["complexidade"])
-        results = results.order_by("-created")
+        results = filter_documents(filters)
     else:
-        results = Document.objects.none()
+        # Sem busca e sem filtros: lista os mais recentes (não vazio como antes)
+        results = filter_documents({})
 
     paginator = Paginator(results, settings.SEARCH_RESULTS_PER_PAGE)
     page_obj = paginator.get_page(page_number)
 
-    collections = Topic.objects.filter(parent_id=0).order_by("name")
-    categories = NrCategory.objects.all().order_by("name")
-    tipologias = ["Administrativo", "Informacional", "Jurisprudencial", "Normativo", "Operacional"]
-    complexidades = ["Baixa", "Média", "Alta"]
+    facets = compute_facets(filters)
 
     return render(request, "search.html", {
         "query": query,
         "page_obj": page_obj,
         "filters": filters,
-        "collections": collections,
-        "categories": categories,
-        "tipologias": tipologias,
-        "complexidades": complexidades,
+        "facets": facets,
         "total_results": paginator.count,
     })
 
