@@ -1,10 +1,12 @@
-{# Rodapé institucional do Portal BDLP — três faixas:
-   1) Faixa azul: 4 colunas de links institucionais
-   2) Faixa branca: selos de parceiros (SBU, LILP, SGGD, Governo SP) +
-      selo "Acessibilidade WCAG 2.0 AA / eMAG 3.1" e "LGPD"
-   3) Barra preta final: © ano + Ouvidoria/Transparência/SIC (URLs do
-      ecossistema GovSP, exatos de compras.sp.gov.br).
-   site_year é injetado pelo context_processor catalog.site_context. #}
+{% comment %}
+Rodapé institucional do Portal BDLP — três faixas:
+1) Faixa azul: 4 colunas de links institucionais.
+2) Faixa branca: selos de parceiros (SBU, LILP, SGGD, Governo SP) +
+   selo "Acessibilidade WCAG 2.0 AA / eMAG 3.1" e "LGPD".
+3) Barra preta final: © ano + Ouvidoria/Transparência/SIC (URLs do
+   ecossistema GovSP).
+site_year é injetado pelo context_processor catalog.site_context.
+{% endcomment %}
 {% load static %}
 <footer id="sp-rodape" class="sp-rodape" role="contentinfo">
   {# ===== Faixa 1 — links institucionais ===== #}
@@ -15,8 +17,8 @@
           <h2 class="sp-rodape__titulo">Sobre</h2>
           <ul>
             <li><a href="{% url 'catalog:about' %}">Sobre a BDLP</a></li>
-            <li><a href="https://www.sggd.sp.gov.br/laboratorio-de-inovacao-em-logistica-publica/" target="_blank" rel="noopener noreferrer">LILP <span class="sr-only">(abre em nova janela)</span></a></li>
-            <li><a href="https://www.sggd.sp.gov.br/" target="_blank" rel="noopener noreferrer">SGGD <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="https://compras.sp.gov.br/laboratorio-de-logistica/" target="_blank" rel="noopener noreferrer">LILP</a></li>
+            <li><a href="https://www.sggd.sp.gov.br/" target="_blank" rel="noopener noreferrer">SGGD</a></li>
             <li><a href="/transparencia/#convenio">Convênio SGGD nº 02/2025</a></li>
           </ul>
         </div>
@@ -35,9 +37,9 @@
           <h2 class="sp-rodape__titulo">Transparência e Cidadania</h2>
           <ul>
             <li><a href="/transparencia/">Acesso à Informação (LAI)</a></li>
-            <li><a href="https://www.ouvidoria.sp.gov.br/" target="_blank" rel="noopener noreferrer">Ouvidoria SP <span class="sr-only">(abre em nova janela)</span></a></li>
-            <li><a href="http://www.transparencia.sp.gov.br/" target="_blank" rel="noopener noreferrer">Portal da Transparência <span class="sr-only">(abre em nova janela)</span></a></li>
-            <li><a href="http://www.sic.sp.gov.br/" target="_blank" rel="noopener noreferrer">SIC <span class="sr-only">(abre em nova janela)</span></a></li>
+            <li><a href="https://www.ouvidoria.sp.gov.br/" target="_blank" rel="noopener noreferrer">Ouvidoria SP</a></li>
+            <li><a href="http://www.transparencia.sp.gov.br/" target="_blank" rel="noopener noreferrer">Portal da Transparência</a></li>
+            <li><a href="http://www.sic.sp.gov.br/" target="_blank" rel="noopener noreferrer">SIC</a></li>
             <li><a href="/politica-de-privacidade/">Política de Privacidade</a></li>
             <li><a href="/politica-de-cookies/">Política de Cookies</a></li>
             <li><a href="/acessibilidade/">Acessibilidade</a></li>
@@ -48,8 +50,8 @@
         <div class="sp-rodape__coluna">
           <h2 class="sp-rodape__titulo">Contato</h2>
           <address>
-            <p><a href="mailto:lilp@sggd.sp.gov.br">lilp@sggd.sp.gov.br</a></p>
-            <p>Av. Morumbi, 4.500<br>Morumbi — São Paulo/SP</p>
+            <p><a href="mailto:lab.sggd@sp.gov.br">lab.sggd@sp.gov.br</a></p>
+            <p>Av. Rangel Pestana, 300<br>Sé — São Paulo/SP</p>
             <p><a href="/fale-conosco/">Fale Conosco</a></p>
           </address>
         </div>
@@ -57,29 +59,21 @@
     </div>
   </div>
 
-  {# ===== Faixa 2 — selos institucionais ===== #}
+  {% comment %}
+  Faixa 2 — selos institucionais.
+  Apenas marca do Governo do Estado de SP (assinatura SP.GOV.BR em preto
+  sobre fundo branco — sggd/logo-gov.png) e selos textuais de conformidade.
+  Logos de parceiros acadêmicos (SBU/Unicamp) NÃO aparecem aqui — esta é
+  uma página institucional do Governo SP. A parceria com o SBU/Unicamp
+  pelo Convênio SGGD nº 02/2025 é descrita em /sobre/.
+  {% endcomment %}
   <div class="sp-rodape__faixa-selos">
     <div class="sp-rodape__container">
-      <ul class="sp-rodape__selos" aria-label="Parceiros e selos de conformidade">
+      <ul class="sp-rodape__selos" aria-label="Identidade institucional e selos de conformidade">
         <li>
-          <img src="{% static 'img/logos/sbu-unicamp/sbu-positivo.png' %}"
-               alt="Sistema de Bibliotecas da Unicamp"
-               width="70" height="40" loading="lazy" decoding="async">
-        </li>
-        <li>
-          <img src="{% static 'img/logos/lilp/lilp.png' %}"
-               alt="Laboratório de Inovação em Logística Pública"
-               width="48" height="42" loading="lazy" decoding="async">
-        </li>
-        <li>
-          <img src="{% static 'img/logos/sggd/logo-footer.png' %}"
-               alt="Secretaria de Gestão e Governo Digital"
-               width="180" height="40" loading="lazy" decoding="async">
-        </li>
-        <li>
-          <img src="{% static 'img/logos/governo-sp/logo-governo-sp-rodape.png' %}"
-               alt="Governo do Estado de São Paulo"
-               width="140" height="26" loading="lazy" decoding="async">
+          <img src="{% static 'img/logos/sggd/logo-gov.png' %}"
+               alt="Governo do Estado de São Paulo — Secretaria de Gestão e Governo Digital"
+               width="206" height="29" loading="lazy" decoding="async">
         </li>
         <li class="sp-rodape__selo-texto" aria-label="Conformidade WCAG 2.0 AA e eMAG 3.1">
           <strong>WCAG 2.0 AA</strong>
@@ -88,6 +82,10 @@
         <li class="sp-rodape__selo-texto" aria-label="Conformidade LGPD">
           <strong>LGPD</strong>
           <span>Lei 13.709/2018</span>
+        </li>
+        <li class="sp-rodape__selo-texto" aria-label="Conformidade LAI">
+          <strong>LAI</strong>
+          <span>Lei 12.527/2011</span>
         </li>
       </ul>
     </div>

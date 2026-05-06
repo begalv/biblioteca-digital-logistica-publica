@@ -1,111 +1,121 @@
 {% extends "base.html" %}
 {% load catalog_tags %}
 
-{% block title %}Busca — Biblioteca Digital de Logística Pública{% endblock %}
+{% block title %}{% if query %}{{ query }} — busca{% else %}Acervo{% endif %} — Biblioteca Digital de Logística Pública{% endblock %}
 
 {% block content %}
-<div class="search-page">
-    <div class="search-header">
-        <form action="{% url 'catalog:search' %}" method="get" class="search-form">
-            <input type="text" name="q" value="{{ query }}" placeholder="Buscar..." class="search-input">
-            <button type="submit" class="btn btn-primary">Buscar</button>
-        </form>
-    </div>
+<article class="sp-pagina-legal sp-busca">
+  <header class="sp-pagina-legal__cabecalho">
+    <h1>Acervo</h1>
+    <p class="sp-pagina-legal__intro">
+      Pesquise por título, autor, palavras-chave ou refine por coleção, tipologia,
+      etapa do processo licitatório e nível de complexidade.
+    </p>
+    <form action="{% url 'catalog:search' %}" method="get" class="search-form" role="search" aria-label="Busca no acervo">
+      <label for="busca-acervo" class="sr-only">Termos da busca</label>
+      <input type="search" id="busca-acervo" name="q" value="{{ query }}"
+             placeholder="Buscar por título, autor, palavras-chave..." class="search-input">
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+  </header>
 
-    <div class="search-layout">
-        <aside class="search-filters">
-            <h3>Filtros</h3>
-            <form action="{% url 'catalog:search' %}" method="get" id="filter-form">
-                <input type="hidden" name="q" value="{{ query }}">
+  <div class="search-layout">
+    <aside class="search-filters" aria-label="Filtros de busca">
+      <h2 class="search-filters__titulo">Filtros</h2>
+      <form action="{% url 'catalog:search' %}" method="get" id="filter-form">
+        <input type="hidden" name="q" value="{{ query }}">
 
-                <div class="filter-group">
-                    <label for="topic_id">Coleção</label>
-                    <select name="topic_id" id="topic_id">
-                        <option value="">Todas</option>
-                        {% for col in collections %}
-                        <option value="{{ col.id }}" {% if filters.topic_id == col.id|stringformat:"d" %}selected{% endif %}>{{ col.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="category_id">Categoria</label>
-                    <select name="category_id" id="category_id">
-                        <option value="">Todas</option>
-                        {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if filters.category_id == cat.id|stringformat:"d" %}selected{% endif %}>{{ cat.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="tipologia">Tipologia</label>
-                    <select name="tipologia" id="tipologia">
-                        <option value="">Todas</option>
-                        {% for tip in tipologias %}
-                        <option value="{{ tip }}" {% if filters.tipologia == tip %}selected{% endif %}>{{ tip }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="complexidade">Complexidade</label>
-                    <select name="complexidade" id="complexidade">
-                        <option value="">Todas</option>
-                        {% for comp in complexidades %}
-                        <option value="{{ comp }}" {% if filters.complexidade == comp %}selected{% endif %}>{{ comp }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-secondary">Filtrar</button>
-            </form>
-        </aside>
-
-        <div class="search-results">
-            {% if query or filters %}
-            <p class="results-count">{{ total_results }} resultado{{ total_results|pluralize }} encontrado{{ total_results|pluralize }}</p>
-
-            {% for doc in page_obj %}
-            <div class="result-item">
-                <h4><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h4>
-                <p class="result-meta">
-                    {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
-                    {% if doc.source %} — {{ doc.source }}{% endif %}
-                    {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
-                    {% if doc.complexidade %}<span class="badge badge-{{ doc.complexidade|lower }}">{{ doc.complexidade }}</span>{% endif %}
-                </p>
-                {% if doc.abstract %}
-                <p class="result-abstract">{{ doc.abstract|truncate_words_html:30 }}</p>
-                {% endif %}
-                {% if doc.keywords %}
-                <div class="result-keywords">
-                    {% for kw in doc.keywords|split_keywords %}
-                    <span class="tag">{{ kw }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-            {% empty %}
-            <p class="no-results">Nenhum resultado encontrado.</p>
+        <div class="filter-group">
+          <label for="topic_id">Coleção</label>
+          <select name="topic_id" id="topic_id">
+            <option value="">Todas</option>
+            {% for col in collections %}
+            <option value="{{ col.id }}" {% if filters.topic_id == col.id|stringformat:"d" %}selected{% endif %}>{{ col.name }}</option>
             {% endfor %}
-
-            {% if page_obj.has_other_pages %}
-            <nav class="pagination">
-                {% if page_obj.has_previous %}
-                <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="btn btn-sm">&laquo; Anterior</a>
-                {% endif %}
-                <span class="page-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-                {% if page_obj.has_next %}
-                <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="btn btn-sm">Próxima &raquo;</a>
-                {% endif %}
-            </nav>
-            {% endif %}
-
-            {% else %}
-            <p class="search-hint">Digite um termo para buscar ou use os filtros ao lado.</p>
-            {% endif %}
+          </select>
         </div>
+
+        <div class="filter-group">
+          <label for="category_id">Categoria</label>
+          <select name="category_id" id="category_id">
+            <option value="">Todas</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if filters.category_id == cat.id|stringformat:"d" %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="tipologia">Tipologia</label>
+          <select name="tipologia" id="tipologia">
+            <option value="">Todas</option>
+            {% for tip in tipologias %}
+            <option value="{{ tip }}" {% if filters.tipologia == tip %}selected{% endif %}>{{ tip }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="complexidade">Complexidade</label>
+          <select name="complexidade" id="complexidade">
+            <option value="">Todas</option>
+            {% for comp in complexidades %}
+            <option value="{{ comp }}" {% if filters.complexidade == comp %}selected{% endif %}>{{ comp }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+      </form>
+    </aside>
+
+    <div class="search-results" aria-label="Resultados da busca">
+      {% if query or filters %}
+      <p class="results-count">
+        <strong>{{ total_results }}</strong> resultado{{ total_results|pluralize }}
+        {% if query %} para <em>“{{ query }}”</em>{% endif %}
+      </p>
+
+      {% for doc in page_obj %}
+      <article class="result-item">
+        <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
+        <p class="result-meta">
+          {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
+          {% if doc.source %} — {{ doc.source }}{% endif %}
+          {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
+          {% if doc.complexidade %}<span class="badge badge-{{ doc.complexidade|lower }}">{{ doc.complexidade }}</span>{% endif %}
+        </p>
+        {% if doc.abstract %}
+        <p class="result-abstract">{{ doc.abstract|truncate_words_html:30 }}</p>
+        {% endif %}
+        {% if doc.keywords %}
+        <div class="result-keywords">
+          {% for kw in doc.keywords|split_keywords %}
+          <span class="tag">{{ kw }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </article>
+      {% empty %}
+      <p class="no-results">Nenhum resultado encontrado.</p>
+      {% endfor %}
+
+      {% if page_obj.has_other_pages %}
+      <nav class="pagination" aria-label="Paginação dos resultados">
+        {% if page_obj.has_previous %}
+        <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}" class="btn btn-sm">&laquo; Anterior</a>
+        {% endif %}
+        <span class="page-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?q={{ query }}&page={{ page_obj.next_page_number }}" class="btn btn-sm">Próxima &raquo;</a>
+        {% endif %}
+      </nav>
+      {% endif %}
+
+      {% else %}
+      <p class="search-hint">Digite um termo no campo acima ou refine usando os filtros à esquerda.</p>
+      {% endif %}
     </div>
-</div>
+  </div>
+</article>
 {% endblock %}

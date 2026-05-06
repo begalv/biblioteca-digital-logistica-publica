@@ -4,66 +4,74 @@
 {% block title %}{{ topic.name }} — Biblioteca Digital de Logística Pública{% endblock %}
 
 {% block content %}
-<nav class="breadcrumb">
-    <a href="{% url 'catalog:collection_list' %}">Coleções</a>
-    {% for item in breadcrumb %}
-    <span class="breadcrumb-sep">/</span>
-    {% if forloop.last %}
-    <span>{{ item.name }}</span>
-    {% else %}
-    <a href="{% url 'catalog:collection_detail' item.id %}">{{ item.name }}</a>
+<article class="sp-pagina-legal">
+  <header class="sp-pagina-legal__cabecalho">
+    <nav class="breadcrumb" aria-label="Você está em">
+      <a href="{% url 'catalog:home' %}">Início</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="{% url 'catalog:collection_list' %}">Coleções</a>
+      {% for item in breadcrumb %}
+      <span class="breadcrumb-sep">/</span>
+      {% if forloop.last %}
+      <span aria-current="page">{{ item.name }}</span>
+      {% else %}
+      <a href="{% url 'catalog:collection_detail' item.id %}">{{ item.name }}</a>
+      {% endif %}
+      {% endfor %}
+    </nav>
+
+    <h1>{{ topic.name }}</h1>
+    {% if topic.description %}
+    <p class="sp-pagina-legal__intro">{{ topic.description }}</p>
     {% endif %}
-    {% endfor %}
-</nav>
+  </header>
 
-<h2>{{ topic.name }}</h2>
-{% if topic.description %}
-<p class="collection-description">{{ topic.description }}</p>
-{% endif %}
-
-{% if subcollections %}
-<section class="subcollections">
-    <h3>Subcoleções</h3>
+  {% if subcollections %}
+  <section>
+    <h2>Subcoleções</h2>
     <div class="grid grid-3">
-        {% for sub in subcollections %}
-        <a href="{% url 'catalog:collection_detail' sub.id %}" class="card card-sm">
-            <h4>{{ sub.name }}</h4>
-            {% if sub.description %}<p>{{ sub.description }}</p>{% endif %}
-        </a>
-        {% endfor %}
+      {% for sub in subcollections %}
+      <a href="{% url 'catalog:collection_detail' sub.id %}" class="card card-sm">
+        <h3>{{ sub.name }}</h3>
+        {% if sub.description %}<p>{{ sub.description }}</p>{% endif %}
+      </a>
+      {% endfor %}
     </div>
-</section>
-{% endif %}
+  </section>
+  {% endif %}
 
-<section class="collection-docs">
-    <h3>Documentos ({{ total_docs }})</h3>
+  <section>
+    <h2>Documentos ({{ total_docs }})</h2>
 
-    {% for doc in page_obj %}
-    <div class="doc-item">
-        <h4><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h4>
+    <div class="doc-list">
+      {% for doc in page_obj %}
+      <article class="doc-item">
+        <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
         <p class="doc-meta">
-            {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
-            {% if doc.source %} — {{ doc.source }}{% endif %}
-            {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
+          {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
+          {% if doc.source %} — {{ doc.source }}{% endif %}
+          {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
         </p>
         {% if doc.abstract %}
         <p class="doc-abstract">{{ doc.abstract|truncate_words_html:25 }}</p>
         {% endif %}
+      </article>
+      {% empty %}
+      <p>Nenhum documento nesta coleção.</p>
+      {% endfor %}
     </div>
-    {% empty %}
-    <p>Nenhum documento nesta coleção.</p>
-    {% endfor %}
 
     {% if page_obj.has_other_pages %}
-    <nav class="pagination">
-        {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm">&laquo; Anterior</a>
-        {% endif %}
-        <span class="page-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm">Próxima &raquo;</a>
-        {% endif %}
+    <nav class="pagination" aria-label="Paginação dos documentos">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm">&laquo; Anterior</a>
+      {% endif %}
+      <span class="page-info">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm">Próxima &raquo;</a>
+      {% endif %}
     </nav>
     {% endif %}
-</section>
+  </section>
+</article>
 {% endblock %}

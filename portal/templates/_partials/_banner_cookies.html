@@ -1,11 +1,12 @@
-{# Banner de cookies LGPD — exibido até o usuário registrar uma escolha
-   (em localStorage sob chave sp-lgpd-consent). Conformidade Lei
-   13.709/2018 (LGPD) e Marco Civil (Lei 12.965/2014).
-
-   IMPORTANTE: usa role="region" + aria-label (NÃO role="dialog" com
-   aria-modal=true) para evitar bloquear navegação por teclado/leitor
-   de tela. Foco não fica preso. Banner pode ser ignorado e o portal
-   continua plenamente navegável. #}
+{% comment %}
+Banner de cookies LGPD — exibido até o usuário registrar uma escolha
+(em localStorage sob chave sp-lgpd-consent). Conformidade Lei
+13.709/2018 (LGPD) e Marco Civil (Lei 12.965/2014).
+IMPORTANTE: usa role="region" + aria-label (NÃO role="dialog" com
+aria-modal=true) para evitar bloquear navegação por teclado/leitor
+de tela. Foco não fica preso. Banner pode ser ignorado e o portal
+continua plenamente navegável.
+{% endcomment %}
 
 <aside id="sp-banner-cookies"
        class="sp-banner-cookies"
@@ -39,9 +40,11 @@
   </div>
 </aside>
 
-{# Modal de personalização — exibido só ao clicar em "Personalizar".
-   Aqui sim é role="dialog" com aria-modal=true, com gestão de foco
-   pelo módulo Cookies em main.js. #}
+{% comment %}
+Modal de personalização — exibido só ao clicar em "Personalizar".
+Aqui sim é role="dialog" com aria-modal=true, com gestão de foco
+pelo módulo Cookies em main.js.
+{% endcomment %}
 <div id="sp-cookies-modal"
      class="sp-cookies-modal"
      role="dialog"
@@ -69,24 +72,26 @@
 
     <fieldset class="sp-cookies-modal__categoria">
       <legend>Estritamente necessários</legend>
-      <label>
-        <input type="checkbox" checked disabled>
+      <label for="cookie-cat-essenciais">
+        <input type="checkbox" id="cookie-cat-essenciais" checked disabled>
         Sempre ativos — funcionamento básico, segurança e CSRF.
       </label>
     </fieldset>
 
     <fieldset class="sp-cookies-modal__categoria">
       <legend>Funcionalidades</legend>
-      <label>
-        <input type="checkbox" name="cookie-cat-funcionalidades" data-cookies-cat="funcionalidades">
+      <label for="cookie-cat-funcionalidades">
+        <input type="checkbox" id="cookie-cat-funcionalidades"
+               name="cookie-cat-funcionalidades" data-cookies-cat="funcionalidades">
         Lembrar minhas preferências (ex.: última coleção visitada).
       </label>
     </fieldset>
 
     <fieldset class="sp-cookies-modal__categoria">
       <legend>Análise de uso</legend>
-      <label>
-        <input type="checkbox" name="cookie-cat-analytics" data-cookies-cat="analytics">
+      <label for="cookie-cat-analytics">
+        <input type="checkbox" id="cookie-cat-analytics"
+               name="cookie-cat-analytics" data-cookies-cat="analytics">
         Permitir medição agregada e anônima de visitas (IP truncado).
       </label>
     </fieldset>

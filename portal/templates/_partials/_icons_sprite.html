@@ -1,10 +1,11 @@
-{# Sprite SVG inline de ícones — define <symbol>s referenciados por
-   <svg><use href="#icon-..."/></svg> em outros partials.
-   Vantagens: 1 requisição, herda currentColor, escala sem perda,
-   compatível com CSP script-src 'self' (sem CDN externo).
-
-   Ícones simples e originais, com viewBox 24x24, fill="currentColor".
-   PNGs em portal/static/img/icons/ permanecem como fallback estático. #}
+{% comment %}
+Sprite SVG inline de ícones — define <symbol>s referenciados via
+<svg><use href="#icon-..."/></svg> em outros partials.
+Vantagens: 1 requisição, herda currentColor, escala sem perda,
+compatível com CSP script-src 'self' (sem CDN externo).
+Ícones simples e originais, viewBox 24x24, fill="currentColor".
+PNGs em portal/static/img/icons/ permanecem como fallback estático.
+{% endcomment %}
 <svg class="sp-icons-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
   {# ===== Redes sociais ===== #}
   <symbol id="icon-facebook" viewBox="0 0 24 24">
