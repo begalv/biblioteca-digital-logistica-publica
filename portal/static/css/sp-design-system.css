@@ -1157,3 +1157,135 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     .sp-banner-lai__icone { width: 40px; height: 40px; font-size: 1.25rem; }
     .sp-banner-lai__texto strong { font-size: 1rem; }
 }
+
+/* ------------------------------------------------------------
+   Estatísticas do acervo (home) — 4 contadores em destaque
+   ------------------------------------------------------------ */
+.sp-stats {
+    margin: 2rem 0;
+}
+
+.sp-stats__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.sp-stats__item {
+    background: var(--sp-fundo-claro);
+    border-left: 4px solid var(--sp-azul);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.sp-stats__numero {
+    font-family: var(--sp-fonte-titulos);
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--sp-azul);
+    line-height: 1;
+}
+
+.sp-stats__rotulo {
+    font-size: var(--fs-small);
+    color: var(--sp-cinza-escuro);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+@media (max-width: 991.98px) {
+    .sp-stats__lista { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 575.98px) {
+    .sp-stats__lista { grid-template-columns: 1fr; }
+    .sp-stats__numero { font-size: 1.85rem; }
+}
+
+/* ------------------------------------------------------------
+   Acesso rápido — cards com ícone (home)
+   ------------------------------------------------------------ */
+.sp-acesso-rapido {
+    margin: 2.5rem 0;
+}
+
+.sp-acesso-rapido h3 {
+    color: var(--sp-azul-escuro);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.sp-card-acesso {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+    border-top: 4px solid var(--sp-amarelo);
+}
+
+.sp-card-acesso__icone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--sp-azul);
+    color: var(--sp-branco);
+    font-size: 1.25rem;
+    margin-bottom: 0.4rem;
+}
+
+.sp-card-acesso h4 {
+    color: var(--sp-azul);
+    margin: 0;
+}
+
+.sp-card-acesso p {
+    color: var(--sp-cinza-escuro);
+    font-size: var(--fs-small);
+    margin: 0;
+}
+
+.sp-card-acesso:hover .sp-card-acesso__icone,
+.sp-card-acesso:focus-visible .sp-card-acesso__icone {
+    background: var(--sp-azul-escuro);
+}
+
+/* ------------------------------------------------------------
+   Logos institucionais inline (página Sobre)
+   ------------------------------------------------------------ */
+.sp-parceiros-imagens {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 1.25rem 0 0.75rem;
+    padding: 1rem;
+    background: var(--sp-fundo-claro);
+    border-radius: 4px;
+    border: 1px solid var(--sp-cinza-claro);
+}
+
+.sp-parceiros-imagens img {
+    max-height: 56px;
+    width: auto;
+    object-fit: contain;
+}
+
+.sp-pagina-legal__cabecalho {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--sp-amarelo);
+}
+
+.sp-pagina-legal__cabecalho h1 {
+    color: var(--sp-azul);
+    margin-bottom: 0.5rem;
+}

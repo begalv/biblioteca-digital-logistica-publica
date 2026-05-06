@@ -1,22 +1,78 @@
 {% extends "base.html" %}
-{% load catalog_tags %}
+{% load static catalog_tags %}
 
-{% block title %}Início — Biblioteca Digital de Logística Pública{% endblock %}
+{% block title %}Início — Biblioteca Digital de Logística Pública | Governo de SP{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h2>Pesquise na Biblioteca Digital de Logística Pública</h2>
-    <p>{{ total_docs }} documentos em {{ total_collections }} coleções</p>
-    <form action="{% url 'catalog:search' %}" method="get" class="search-form-hero">
-        <input type="text" name="q" placeholder="Buscar por título, autor, palavras-chave..." class="search-input-hero" autofocus>
+<section class="hero" aria-labelledby="hero-titulo">
+    <h2 id="hero-titulo">Pesquise na Biblioteca Digital de Logística Pública</h2>
+    <p>Repositório temático sobre licitações, contratos administrativos e logística pública do Estado de São Paulo</p>
+    <form action="{% url 'catalog:search' %}" method="get" class="search-form-hero" role="search" aria-label="Busca rápida no acervo">
+        <label for="hero-q" class="sr-only">Termos da busca</label>
+        <input type="text" id="hero-q" name="q" placeholder="Buscar por título, autor, palavras-chave..." class="search-input-hero" autofocus>
         <button type="submit" class="btn btn-primary">Buscar</button>
     </form>
 </section>
 
 {% include "_partials/_banner_lai.html" %}
 
-<section class="collections-grid">
-    <h3>Coleções</h3>
+<section class="sp-stats" aria-label="Estatísticas do acervo">
+    <ul class="sp-stats__lista">
+        <li class="sp-stats__item">
+            <strong class="sp-stats__numero">{{ total_documentos|default:total_docs }}</strong>
+            <span class="sp-stats__rotulo">documentos catalogados</span>
+        </li>
+        <li class="sp-stats__item">
+            <strong class="sp-stats__numero">{{ total_colecoes|default:total_collections }}</strong>
+            <span class="sp-stats__rotulo">coleções principais</span>
+        </li>
+        <li class="sp-stats__item">
+            <strong class="sp-stats__numero">100%</strong>
+            <span class="sp-stats__rotulo">acesso aberto e gratuito</span>
+        </li>
+        <li class="sp-stats__item">
+            <strong class="sp-stats__numero">2025</strong>
+            <span class="sp-stats__rotulo">Convênio SGGD nº 02</span>
+        </li>
+    </ul>
+</section>
+
+<section class="sp-acesso-rapido" aria-labelledby="acesso-rapido-titulo">
+    <h3 id="acesso-rapido-titulo">Acesso rápido</h3>
+    <div class="grid grid-4 sp-acesso-rapido__grid">
+        <a href="{% url 'catalog:search' %}" class="card sp-card-acesso">
+            <span class="sp-card-acesso__icone" aria-hidden="true">
+                <svg class="sp-icon" focusable="false"><use href="#icon-busca"/></svg>
+            </span>
+            <h4>Buscar no acervo</h4>
+            <p>Pesquise por título, autor ou palavras-chave em todo o catálogo.</p>
+        </a>
+        <a href="{% url 'catalog:collection_list' %}" class="card sp-card-acesso">
+            <span class="sp-card-acesso__icone" aria-hidden="true">
+                <svg class="sp-icon" focusable="false"><use href="#icon-menu"/></svg>
+            </span>
+            <h4>Coleções</h4>
+            <p>Navegue pelos eixos temáticos do acervo: eventos, livros, materiais e teses.</p>
+        </a>
+        <a href="{% url 'catalog:search' %}?tipologia=Normativo" class="card sp-card-acesso">
+            <span class="sp-card-acesso__icone" aria-hidden="true">
+                <svg class="sp-icon" focusable="false"><use href="#icon-info"/></svg>
+            </span>
+            <h4>Normativos</h4>
+            <p>Leis, decretos, resoluções e instruções normativas aplicáveis à logística pública.</p>
+        </a>
+        <a href="{% url 'catalog:about' %}" class="card sp-card-acesso">
+            <span class="sp-card-acesso__icone" aria-hidden="true">
+                <svg class="sp-icon" focusable="false"><use href="#icon-info"/></svg>
+            </span>
+            <h4>Sobre o projeto</h4>
+            <p>Conheça o LILP, a SGGD e a parceria com o SBU/Unicamp.</p>
+        </a>
+    </div>
+</section>
+
+<section class="collections-grid" aria-labelledby="colecoes-titulo">
+    <h3 id="colecoes-titulo">Coleções</h3>
     <div class="grid grid-4">
         {% for collection in collections %}
         <a href="{% url 'catalog:collection_detail' collection.id %}" class="card">
@@ -27,11 +83,11 @@
     </div>
 </section>
 
-<section class="recent-docs">
-    <h3>Adições recentes</h3>
+<section class="recent-docs" aria-labelledby="recentes-titulo">
+    <h3 id="recentes-titulo">Adições recentes</h3>
     <div class="doc-list">
         {% for doc in recent_docs %}
-        <div class="doc-item">
+        <article class="doc-item">
             <a href="{% url 'catalog:document_detail' doc.code %}">
                 <h4>{{ doc.title }}</h4>
             </a>
@@ -42,7 +98,7 @@
             {% if doc.abstract %}
             <p class="doc-abstract">{{ doc.abstract|truncate_words_html:25 }}</p>
             {% endif %}
-        </div>
+        </article>
         {% endfor %}
     </div>
 </section>
