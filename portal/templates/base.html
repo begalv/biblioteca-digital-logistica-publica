@@ -23,17 +23,7 @@
     {% include "_partials/_barra_govsp.html" %}
 
     {% include "_partials/_header_institucional.html" %}
-
-    {# Menu principal — placeholder; será expandido com aria-current,
-       accesskey e versão hambúrguer no próximo commit. #}
-    <nav id="sp-menu" class="sp-menu-principal" role="navigation" aria-label="Menu principal">
-        <div class="sp-menu-principal__inner">
-            <a href="{% url 'catalog:home' %}">Início</a>
-            <a href="{% url 'catalog:collection_list' %}">Coleções</a>
-            <a href="{% url 'catalog:search' %}">Busca</a>
-            <a href="{% url 'catalog:about' %}">Sobre</a>
-        </div>
-    </nav>
+    {% include "_partials/_menu_principal.html" %}
 
     <main id="sp-conteudo" class="main" role="main" tabindex="-1">
         <div class="container">

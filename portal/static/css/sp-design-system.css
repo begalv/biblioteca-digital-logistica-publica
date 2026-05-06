@@ -436,11 +436,13 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
 }
 
 /* ------------------------------------------------------------
-   Menu principal — placeholder (estilos completos no commit do menu)
+   Menu principal de navegação — desktop horizontal, mobile hambúrguer.
+   Estado expandido controlado por main.js (aria-expanded no botão).
    ------------------------------------------------------------ */
 .sp-menu-principal {
     background: var(--sp-fundo-claro);
     border-bottom: 1px solid var(--sp-cinza-claro);
+    position: relative;
 }
 
 .sp-menu-principal__inner {
@@ -448,11 +450,39 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     margin-inline: auto;
     padding: 0 var(--container-padding);
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    align-items: stretch;
 }
 
-.sp-menu-principal a {
+.sp-menu-principal__toggle {
+    display: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--sp-azul);
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sp-menu-principal__toggle-label {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.sp-menu-principal__lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.sp-menu-principal__lista a {
     display: inline-flex;
     align-items: center;
     padding: 0.85rem 1rem;
@@ -460,18 +490,65 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     text-decoration: none;
     font-weight: 500;
     border-bottom: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
 }
 
-.sp-menu-principal a:hover,
-.sp-menu-principal a:focus-visible {
+.sp-menu-principal__lista a:hover,
+.sp-menu-principal__lista a:focus-visible {
     background: var(--sp-branco);
     color: var(--sp-azul-escuro);
     border-bottom-color: var(--sp-amarelo);
     text-decoration: none;
 }
 
-.sp-menu-principal a[aria-current="page"] {
+.sp-menu-principal__lista a[aria-current="page"] {
     color: var(--sp-azul-escuro);
     border-bottom-color: var(--sp-amarelo);
     font-weight: 700;
+}
+
+/* Mobile — hambúrguer + drawer */
+@media (max-width: 991.98px) {
+    .sp-menu-principal__inner {
+        flex-wrap: wrap;
+    }
+
+    .sp-menu-principal__toggle {
+        display: inline-flex;
+    }
+
+    .sp-menu-principal__lista {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: var(--sp-branco);
+        border-top: 1px solid var(--sp-cinza-claro);
+    }
+
+    .sp-menu-principal[data-aberto="true"] .sp-menu-principal__lista {
+        display: flex;
+    }
+
+    .sp-menu-principal__lista li {
+        width: 100%;
+        border-bottom: 1px solid var(--sp-cinza-claro);
+    }
+
+    .sp-menu-principal__lista li:last-child {
+        border-bottom: none;
+    }
+
+    .sp-menu-principal__lista a {
+        width: 100%;
+        padding: 0.85rem 1.25rem;
+        border-bottom: none;
+        border-left: 3px solid transparent;
+    }
+
+    .sp-menu-principal__lista a:hover,
+    .sp-menu-principal__lista a:focus-visible,
+    .sp-menu-principal__lista a[aria-current="page"] {
+        border-bottom-color: transparent;
+        border-left-color: var(--sp-amarelo);
+    }
 }

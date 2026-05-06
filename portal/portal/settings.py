@@ -39,6 +39,7 @@ TEMPLATES = [
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
+                "catalog.context_processors.site_context",
             ],
         },
     },
