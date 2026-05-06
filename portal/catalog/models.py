@@ -98,6 +98,68 @@ class TypeInformation(models.Model):
         return self.name
 
 
+class Assunto(models.Model):
+    """Eixo temático transversal (16 valores) — mapeia tabela 'nr_assunto'."""
+
+    nome = models.CharField(max_length=255, unique=True)
+    slug = models.CharField(max_length=255, unique=True)
+    ordem = models.IntegerField(default=0)
+
+    class Meta:
+        managed = False
+        db_table = "nr_assunto"
+        ordering = ["ordem", "nome"]
+
+    def __str__(self):
+        return self.nome
+
+
+class Subcategoria(models.Model):
+    """Subcategoria sob uma Categoria (~47 valores) — mapeia tabela 'nr_subcategoria'."""
+
+    nome = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    category_id = models.IntegerField()
+    ordem = models.IntegerField(default=0)
+
+    class Meta:
+        managed = False
+        db_table = "nr_subcategoria"
+        ordering = ["ordem", "nome"]
+
+    def __str__(self):
+        return self.nome
+
+    @property
+    def category(self):
+        if self.category_id:
+            return NrCategory.objects.filter(id=self.category_id).first()
+        return None
+
+
+class Microcategoria(models.Model):
+    """Microcategoria sob uma Subcategoria (~80 valores) — mapeia tabela 'nr_microcategoria'."""
+
+    nome = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255)
+    subcategoria_id = models.IntegerField()
+    ordem = models.IntegerField(default=0)
+
+    class Meta:
+        managed = False
+        db_table = "nr_microcategoria"
+        ordering = ["ordem", "nome"]
+
+    def __str__(self):
+        return self.nome
+
+    @property
+    def subcategoria(self):
+        if self.subcategoria_id:
+            return Subcategoria.objects.filter(id=self.subcategoria_id).first()
+        return None
+
+
 class Document(models.Model):
     """Documento digital — mapeia tabela 'nr_document' do Nou-Rau."""
 
@@ -163,6 +225,14 @@ class Document(models.Model):
     referencias = models.TextField(blank=True)
     publicacao = models.CharField(max_length=500, blank=True)
 
+    # Taxonomia hierárquica (template BDLP_Template_Insercao)
+    assunto_id = models.IntegerField(null=True, blank=True)
+    subcategoria_id = models.IntegerField(null=True, blank=True)
+    microcategoria_id = models.IntegerField(null=True, blank=True)
+    ano = models.IntegerField(null=True, blank=True)
+    PERMISSAO_CHOICES = [("Aberto", "Aberto"), ("Restrito", "Restrito")]
+    permissao = models.CharField(max_length=20, blank=True, choices=PERMISSAO_CHOICES)
+
     class Meta:
         managed = False
         db_table = "nr_document"
@@ -192,6 +262,24 @@ class Document(models.Model):
     def type_info(self):
         if self.typeinform_id:
             return TypeInformation.objects.filter(id=self.typeinform_id).first()
+        return None
+
+    @property
+    def assunto(self):
+        if self.assunto_id:
+            return Assunto.objects.filter(id=self.assunto_id).first()
+        return None
+
+    @property
+    def subcategoria(self):
+        if self.subcategoria_id:
+            return Subcategoria.objects.filter(id=self.subcategoria_id).first()
+        return None
+
+    @property
+    def microcategoria(self):
+        if self.microcategoria_id:
+            return Microcategoria.objects.filter(id=self.microcategoria_id).first()
         return None
 
     @property
