@@ -45,19 +45,19 @@
         </a>
       </li>
       <li>
-        <a href="/acessibilidade/"
+        <a href="{% url 'catalog:acessibilidade' %}"
            {% if current_url_name == 'acessibilidade' %}aria-current="page"{% endif %}>
           Acessibilidade
         </a>
       </li>
       <li>
-        <a href="/transparencia/"
+        <a href="{% url 'catalog:transparencia' %}"
            {% if current_url_name == 'transparencia' %}aria-current="page"{% endif %}>
           Transparência
         </a>
       </li>
       <li>
-        <a href="/fale-conosco/"
+        <a href="{% url 'catalog:fale_conosco' %}"
            {% if current_url_name == 'fale_conosco' %}aria-current="page"{% endif %}>
           Contato
         </a>

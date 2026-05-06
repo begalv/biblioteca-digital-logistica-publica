@@ -12,4 +12,12 @@ urlpatterns = [
     path("colecao/<int:topic_id>/", views.collection_detail, name="collection_detail"),
     path("download/<str:code>/", views.download, name="download"),
     path("sobre/", views.about, name="about"),
+
+    # Páginas institucionais e legais (LAI / LGPD / eMAG / Lei 13.460)
+    path("transparencia/", views.transparencia, name="transparencia"),
+    path("acessibilidade/", views.acessibilidade, name="acessibilidade"),
+    path("politica-de-privacidade/", views.politica_privacidade, name="politica_privacidade"),
+    path("politica-de-cookies/", views.politica_cookies, name="politica_cookies"),
+    path("mapa-do-site/", views.mapa_site, name="mapa_site"),
+    path("fale-conosco/", views.fale_conosco, name="fale_conosco"),
 ]

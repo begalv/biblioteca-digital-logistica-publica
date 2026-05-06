@@ -739,3 +739,156 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     .sp-rodape__selos { gap: 1rem; }
     .sp-rodape__final-inner { flex-direction: column; align-items: center; text-align: center; }
 }
+
+/* ------------------------------------------------------------
+   Aviso de rascunho — faixa amarela no topo das páginas legais
+   pendentes de validação jurídica
+   ------------------------------------------------------------ */
+.sp-aviso-rascunho {
+    background: var(--sp-amarelo);
+    color: var(--sp-preto);
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    border-left: 6px solid var(--sp-vermelho);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.sp-aviso-rascunho strong {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------
+   Páginas institucionais e legais — tipografia legível
+   ------------------------------------------------------------ */
+.sp-pagina-legal {
+    max-width: 880px;
+    margin-inline: auto;
+    color: var(--sp-texto-corpo);
+}
+
+.sp-pagina-legal header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--sp-amarelo);
+}
+
+.sp-pagina-legal h1 {
+    color: var(--sp-azul);
+    margin-bottom: 0.5rem;
+}
+
+.sp-pagina-legal__intro {
+    font-size: 1.05rem;
+    color: var(--sp-cinza-escuro);
+}
+
+.sp-pagina-legal section {
+    margin-bottom: 1.75rem;
+}
+
+.sp-pagina-legal h2 {
+    color: var(--sp-azul);
+    margin-bottom: 0.75rem;
+    font-size: 1.4rem;
+}
+
+.sp-pagina-legal h3 {
+    color: var(--sp-azul-escuro);
+    margin: 1rem 0 0.5rem;
+    font-size: 1.15rem;
+}
+
+.sp-pagina-legal p,
+.sp-pagina-legal li,
+.sp-pagina-legal address {
+    line-height: 1.7;
+    margin-bottom: 0.6rem;
+}
+
+.sp-pagina-legal ul,
+.sp-pagina-legal ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.sp-pagina-legal kbd {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    font-family: 'Roboto Mono', Consolas, Menlo, monospace;
+    font-size: 0.85em;
+    background: var(--sp-fundo-claro);
+    border: 1px solid var(--sp-cinza-claro);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    color: var(--sp-preto);
+}
+
+.sp-pagina-legal code {
+    font-family: 'Roboto Mono', Consolas, Menlo, monospace;
+    background: var(--sp-fundo-claro);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--sp-azul-escuro);
+}
+
+/* Tabela de cookies (politica_cookies.html) */
+.sp-tabela-cookies {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.85rem 0;
+    font-size: 0.9rem;
+}
+
+.sp-tabela-cookies th,
+.sp-tabela-cookies td {
+    border: 1px solid var(--sp-cinza-claro);
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.sp-tabela-cookies th {
+    background: var(--sp-fundo-claro);
+    color: var(--sp-azul-escuro);
+    font-weight: 700;
+}
+
+/* Mapa do site — listas hierárquicas */
+.sp-mapa-site,
+.sp-mapa-site ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+.sp-mapa-site > li {
+    margin-bottom: 0.5rem;
+}
+
+/* Fale Conosco — definição de canais */
+.sp-canais-contato dt {
+    font-weight: 700;
+    color: var(--sp-azul-escuro);
+    margin-top: 1rem;
+    font-size: 1.05rem;
+}
+
+.sp-canais-contato dd {
+    margin: 0.25rem 0 0.5rem 0;
+    padding-left: 0;
+}
+
+.sp-canais-contato__nota {
+    font-size: 0.85rem;
+    color: var(--sp-cinza-escuro);
+    margin-top: 0.25rem;
+}
