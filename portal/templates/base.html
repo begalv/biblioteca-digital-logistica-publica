@@ -22,24 +22,18 @@
     {% include "_partials/_skip_links.html" %}
     {% include "_partials/_barra_govsp.html" %}
 
-    <header class="header" role="banner">
-        <div class="container">
-            <div class="header-content">
-                <div class="header-logo">
-                    <a href="{% url 'catalog:home' %}" aria-label="Página inicial — Biblioteca Digital de Logística Pública">
-                        <h1>Biblioteca Digital de Logística Pública</h1>
-                        <p class="header-subtitle">Estado de São Paulo</p>
-                    </a>
-                </div>
-                <nav id="sp-menu" class="header-nav" role="navigation" aria-label="Menu principal">
-                    <a href="{% url 'catalog:home' %}">Início</a>
-                    <a href="{% url 'catalog:collection_list' %}">Coleções</a>
-                    <a href="{% url 'catalog:search' %}">Busca</a>
-                    <a href="{% url 'catalog:about' %}">Sobre</a>
-                </nav>
-            </div>
+    {% include "_partials/_header_institucional.html" %}
+
+    {# Menu principal — placeholder; será expandido com aria-current,
+       accesskey e versão hambúrguer no próximo commit. #}
+    <nav id="sp-menu" class="sp-menu-principal" role="navigation" aria-label="Menu principal">
+        <div class="sp-menu-principal__inner">
+            <a href="{% url 'catalog:home' %}">Início</a>
+            <a href="{% url 'catalog:collection_list' %}">Coleções</a>
+            <a href="{% url 'catalog:search' %}">Busca</a>
+            <a href="{% url 'catalog:about' %}">Sobre</a>
         </div>
-    </header>
+    </nav>
 
     <main id="sp-conteudo" class="main" role="main" tabindex="-1">
         <div class="container">
