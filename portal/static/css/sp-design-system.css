@@ -122,3 +122,123 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     fill: currentColor;
     stroke: currentColor;
 }
+
+/* ------------------------------------------------------------
+   Barra do Governo de SP — faixa preta superior (Decreto 69.056/2024)
+   Réplica funcional da barra usada em saopaulo.sp.gov.br
+   ------------------------------------------------------------ */
+.sp-barra-govsp {
+    background: var(--sp-preto);
+    color: var(--sp-branco);
+    font-size: var(--fs-small);
+    line-height: 1;
+    border-bottom: 3px solid var(--sp-vermelho);
+}
+
+.sp-barra-govsp__inner {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: 0.4rem var(--container-padding);
+    min-height: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sp-barra-govsp__logo {
+    display: inline-flex;
+    align-items: center;
+    margin-right: auto;
+    text-decoration: none;
+}
+
+.sp-barra-govsp__logo img {
+    height: 22px;
+    width: auto;
+    display: block;
+}
+
+.sp-barra-govsp__link {
+    color: var(--sp-branco);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    font-weight: 500;
+}
+
+.sp-barra-govsp__link:hover,
+.sp-barra-govsp__link:focus-visible {
+    text-decoration: underline;
+    color: var(--sp-amarelo);
+}
+
+.sp-barra-govsp__redes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.sp-barra-govsp__redes a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    color: var(--sp-branco);
+    text-decoration: none;
+    font-size: 1.05rem;
+}
+
+.sp-barra-govsp__redes a:hover,
+.sp-barra-govsp__redes a:focus-visible {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--sp-amarelo);
+}
+
+.sp-a11y-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.25);
+    padding-left: 0.75rem;
+    margin-left: 0.5rem;
+}
+
+.sp-a11y-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--sp-branco);
+    width: 30px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    text-decoration: none;
+    padding: 0;
+}
+
+.sp-a11y-btn:hover,
+.sp-a11y-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--sp-amarelo);
+}
+
+.sp-a11y-btn[aria-pressed="true"] {
+    background: var(--sp-amarelo);
+    color: var(--sp-preto);
+}
+
+@media (max-width: 575.98px) {
+    .sp-barra-govsp__inner { padding: 0.4rem 0.75rem; gap: 0.5rem; }
+    .sp-barra-govsp__link { display: none; }
+    .sp-barra-govsp__redes { gap: 0; }
+    .sp-barra-govsp__redes a { width: 26px; height: 26px; }
+    .sp-a11y-controls { padding-left: 0.5rem; margin-left: 0.25rem; }
+}
