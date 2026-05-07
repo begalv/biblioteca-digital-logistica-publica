@@ -114,21 +114,6 @@
         {% include "_partials/_facet_list.html" with facet=facets.tipos_informacao param="typeinform_id" current=filters.typeinform_id %}
       </details>
 
-      <details class="facet-group">
-        <summary>Tipologia</summary>
-        {% include "_partials/_facet_list.html" with facet=facets.tipologias param="tipologia" current=filters.tipologia is_string=True %}
-      </details>
-
-      <details class="facet-group">
-        <summary>Complexidade</summary>
-        {% include "_partials/_facet_list.html" with facet=facets.complexidades param="complexidade" current=filters.complexidade is_string=True %}
-      </details>
-
-      <details class="facet-group">
-        <summary>Permissão de acesso</summary>
-        {% include "_partials/_facet_list.html" with facet=facets.permissoes param="permissao" current=filters.permissao is_string=True %}
-      </details>
-
       <button type="submit" class="btn btn-primary btn-apply">Aplicar filtros</button>
     </aside>
 
@@ -150,7 +135,6 @@
           {% if doc.source %} — {{ doc.source }}{% endif %}
           {% if doc.ano %} — {{ doc.ano }}{% endif %}
           {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
-          {% if doc.complexidade %}<span class="badge badge-{{ doc.complexidade|lower }}">{{ doc.complexidade }}</span>{% endif %}
           {% if doc.permissao %}<span class="badge badge-{{ doc.permissao|lower }}">{{ doc.permissao }}</span>{% endif %}
         </p>
         {% if doc.abstract %}
