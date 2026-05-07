@@ -48,13 +48,32 @@ def home(request):
         "macroetapas": NrCategory.objects.count(),
     }
 
+    # Stat 4: % de acesso aberto
+    aberto = Document.objects.filter(status="a", permissao="Aberto").count()
+    pct_aberto = round(100 * aberto / total_docs) if total_docs else 0
+
+    # Cards de coleção na home — adicionar contagem (incluindo subcoleções)
+    docs_by_topic = dict(
+        Document.objects.filter(status="a")
+        .values_list("topic_id")
+        .annotate(c=Count("id"))
+        .values_list("topic_id", "c")
+    )
+    collections_with_count = []
+    for col in collections:
+        sub_ids = list(Topic.objects.filter(parent_id=col.id).values_list("id", flat=True))
+        topic_ids = [col.id] + sub_ids
+        col_count = sum(docs_by_topic.get(tid, 0) for tid in topic_ids)
+        collections_with_count.append({"topic": col, "doc_count": col_count})
+
     return render(request, "home.html", {
-        "collections": collections,
+        "collections": collections_with_count,
         "recent_docs": recent_docs,
         "total_docs": total_docs,
         "tipos_top": tipos_top,
         "tipos_distintos": tipos_distintos,
         "cobertura": cobertura,
+        "pct_aberto": pct_aberto,
     })
 
 
@@ -118,16 +137,31 @@ def collection_list(request):
     """Grid das coleções principais."""
     collections = Topic.objects.filter(parent_id=0).order_by("name")
 
+    # Contagem agregada de docs por topic_id (única query)
+    from django.db.models import Count
+    docs_by_topic = dict(
+        Document.objects.filter(status="a")
+        .values_list("topic_id")
+        .annotate(c=Count("id"))
+        .values_list("topic_id", "c")
+    )
+
     collection_data = []
     for col in collections:
-        subcollections = Topic.objects.filter(parent_id=col.id).order_by("name")
-        # Contar docs na coleção e subcoleções
-        topic_ids = [col.id] + list(subcollections.values_list("id", flat=True))
-        doc_count = Document.objects.filter(status="a", topic_id__in=topic_ids).count()
+        subcollections_qs = Topic.objects.filter(parent_id=col.id)
+        subs_with_count = []
+        sub_total = 0
+        for sub in subcollections_qs:
+            count = docs_by_topic.get(sub.id, 0)
+            sub_total += count
+            subs_with_count.append({"topic": sub, "doc_count": count})
+        # Ordenar por contagem desc (mais populadas primeiro), depois alfabético
+        subs_with_count.sort(key=lambda s: (-s["doc_count"], s["topic"].name))
+        own_count = docs_by_topic.get(col.id, 0)
         collection_data.append({
             "topic": col,
-            "subcollections": subcollections,
-            "doc_count": doc_count,
+            "subcollections": subs_with_count,
+            "doc_count": own_count + sub_total,
         })
 
     return render(request, "collection_list.html", {"collection_data": collection_data})
@@ -135,16 +169,35 @@ def collection_list(request):
 
 def collection_detail(request, topic_id):
     """Detalhes de uma coleção com subcoleções e documentos."""
+    from django.db.models import Count
+
     topic = get_object_or_404(Topic, id=topic_id)
-    subcollections = Topic.objects.filter(parent_id=topic.id).order_by("name")
+    subcollections_qs = Topic.objects.filter(parent_id=topic.id).order_by("name")
     page_number = request.GET.get("page", 1)
 
     # Documentos da coleção e subcoleções
-    topic_ids = [topic.id] + list(subcollections.values_list("id", flat=True))
+    topic_ids = [topic.id] + list(subcollections_qs.values_list("id", flat=True))
     documents = Document.objects.filter(status="a", topic_id__in=topic_ids).order_by("-created")
 
     paginator = Paginator(documents, settings.SEARCH_RESULTS_PER_PAGE)
     page_obj = paginator.get_page(page_number)
+
+    # Contagem por subcoleção (única query)
+    docs_by_topic = dict(
+        Document.objects.filter(status="a", topic_id__in=topic_ids)
+        .values_list("topic_id")
+        .annotate(c=Count("id"))
+        .values_list("topic_id", "c")
+    )
+    subcollections = [
+        {"topic": sub, "doc_count": docs_by_topic.get(sub.id, 0)}
+        for sub in subcollections_qs
+    ]
+    # Ordenar por contagem desc, depois alfabético
+    subcollections.sort(key=lambda s: (-s["doc_count"], s["topic"].name))
+    # Versão filtrada (>0) para a UI; mantemos a lista completa para
+    # `topic_ids` e contagem total dos documentos da coleção.
+    subcollections_visiveis = [s for s in subcollections if s["doc_count"] > 0]
 
     # Breadcrumb
     breadcrumb = []
@@ -157,6 +210,7 @@ def collection_detail(request, topic_id):
     return render(request, "collection_detail.html", {
         "topic": topic,
         "subcollections": subcollections,
+        "subcollections_visiveis": subcollections_visiveis,
         "page_obj": page_obj,
         "breadcrumb": breadcrumb,
         "total_docs": paginator.count,

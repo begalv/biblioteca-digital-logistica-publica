@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load catalog_tags %}
 
 {% block title %}Coleções — Biblioteca Digital de Logística Pública{% endblock %}
 
@@ -21,11 +22,13 @@
       {% if item.topic.description %}
       <p>{{ item.topic.description }}</p>
       {% endif %}
-      <p class="collection-count">{{ item.doc_count }} documento{{ item.doc_count|pluralize }}</p>
+      <p class="collection-count">{{ item.doc_count }} {{ item.doc_count|pluralize_pt:"documento" }}</p>
       {% if item.subcollections %}
       <ul class="subcollection-list" aria-label="Subcoleções de {{ item.topic.name }}">
         {% for sub in item.subcollections %}
-        <li>{{ sub.name }}</li>
+          {% if sub.doc_count > 0 %}
+          <li>{{ sub.topic.name }} <span class="subcollection-count">{{ sub.doc_count }}</span></li>
+          {% endif %}
         {% endfor %}
       </ul>
       {% endif %}

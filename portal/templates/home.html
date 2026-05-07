@@ -5,7 +5,7 @@
 
 {% block content %}
 <section class="hero hero--photo" aria-labelledby="hero-titulo"
-         style="background-image: linear-gradient(rgba(189, 14, 21, 0.78), rgba(189, 14, 21, 0.78)), url('{% static 'img/bsp-foto.jpg' %}');">
+         style="background-image: linear-gradient(rgba(189, 14, 21, 0.22), rgba(189, 14, 21, 0.22)), url('{% static 'img/bsp-foto.jpg' %}');">
     <div class="hero__interior">
         <h1 id="hero-titulo">Pesquise na Biblioteca Digital de Logística Pública</h1>
         <p>Repositório temático sobre licitações, contratos administrativos e logística pública do Estado de São Paulo</p>
@@ -17,7 +17,7 @@
     </div>
 </section>
 
-<section class="sp-stats sp-stats--3col" aria-label="Estatísticas do acervo">
+<section class="sp-stats" aria-label="Estatísticas do acervo">
     <ul class="sp-stats__lista">
         <li class="sp-stats__item">
             <strong class="sp-stats__numero">{{ total_docs }}</strong>
@@ -25,7 +25,7 @@
         </li>
         <li class="sp-stats__item">
             <strong class="sp-stats__numero">{{ tipos_distintos }}</strong>
-            <span class="sp-stats__rotulo">tipos de informação</span>
+            <span class="sp-stats__rotulo">modalidades de material</span>
             {% if tipos_top %}
             <span class="sp-stats__detalhe">
                 {% for t in tipos_top %}{{ t.nome }} ({{ t.count }}){% if not forloop.last %} · {% endif %}{% endfor %}
@@ -38,6 +38,11 @@
             <span class="sp-stats__detalhe">
                 {{ cobertura.macroetapas }} macroetapas · {{ cobertura.subcategorias }} subcategorias
             </span>
+        </li>
+        <li class="sp-stats__item">
+            <strong class="sp-stats__numero">{{ pct_aberto }}%</strong>
+            <span class="sp-stats__rotulo">acesso aberto</span>
+            <span class="sp-stats__detalhe">disponíveis sem cadastro</span>
         </li>
     </ul>
 </section>
@@ -59,19 +64,19 @@
             <h3>Coleções</h3>
             <p>Navegue pelos eixos temáticos do acervo: eventos, livros, materiais e teses.</p>
         </a>
-        <a href="{% url 'catalog:search' %}?tipologia=Normativo" class="card sp-card-acesso">
+        <a href="{% url 'catalog:search' %}?ano_min=2026&amp;ano_max=2026" class="card sp-card-acesso">
             <span class="sp-card-acesso__icone" aria-hidden="true">
-                <svg class="sp-icon" focusable="false"><use href="#icon-info"/></svg>
+                <svg class="sp-icon" focusable="false"><use href="#icon-calendario"/></svg>
             </span>
-            <h3>Normativos</h3>
-            <p>Leis, decretos, resoluções e instruções normativas aplicáveis à logística pública.</p>
+            <h3>Pesquisas recentes</h3>
+            <p>Materiais publicados em 2026 — produção mais atual do acervo.</p>
         </a>
-        <a href="{% url 'catalog:about' %}" class="card sp-card-acesso">
+        <a href="{% url 'catalog:search' %}?q=14.133" class="card sp-card-acesso">
             <span class="sp-card-acesso__icone" aria-hidden="true">
-                <svg class="sp-icon" focusable="false"><use href="#icon-info"/></svg>
+                <svg class="sp-icon" focusable="false"><use href="#icon-balanca"/></svg>
             </span>
-            <h3>Sobre o projeto</h3>
-            <p>Conheça o LILP, a SGGD e a parceria com o SBU/Unicamp.</p>
+            <h3>Lei 14.133/2021</h3>
+            <p>Materiais sobre a Nova Lei de Licitações e Contratos Administrativos.</p>
         </a>
     </div>
 </section>
@@ -79,10 +84,11 @@
 <section class="collections-grid" aria-labelledby="colecoes-titulo">
     <h2 id="colecoes-titulo">Coleções</h2>
     <div class="grid grid-4">
-        {% for collection in collections %}
-        <a href="{% url 'catalog:collection_detail' collection.id %}" class="card">
-            <h3>{{ collection.name }}</h3>
-            <p>{{ collection.description }}</p>
+        {% for item in collections %}
+        <a href="{% url 'catalog:collection_detail' item.topic.id %}" class="card">
+            <h3>{{ item.topic.name }}</h3>
+            {% if item.topic.description %}<p>{{ item.topic.description }}</p>{% endif %}
+            <p class="collection-count">{{ item.doc_count }} {{ item.doc_count|pluralize_pt:"documento" }}</p>
         </a>
         {% endfor %}
     </div>
@@ -90,19 +96,29 @@
 
 <section class="recent-docs" aria-labelledby="recentes-titulo">
     <h2 id="recentes-titulo">Adições recentes</h2>
-    <div class="doc-list">
-        {% for doc in recent_docs %}
-        <article class="doc-item">
-            <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
-            <p class="doc-meta">
-                {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
-                {% if doc.source %} — {{ doc.source }}{% endif %}
-            </p>
-            {% if doc.abstract %}
-            <p class="doc-abstract">{{ doc.abstract|truncate_words_html:25 }}</p>
-            {% endif %}
-        </article>
-        {% endfor %}
-    </div>
+    {% for doc in recent_docs %}
+    <article class="result-item">
+        <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
+        <p class="result-meta">
+            {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
+            {% if doc.source and not doc.source|is_year_only %} — {{ doc.source }}{% endif %}
+            {% if doc.ano %} — {{ doc.ano }}{% endif %}
+            {% with assunto=doc.assunto %}
+            {% if assunto %}<span class="badge badge-assunto">{{ assunto.nome }}</span>{% endif %}
+            {% endwith %}
+            {% if doc.category %}<span class="badge badge-categoria">{{ doc.category.name }}</span>{% endif %}
+        </p>
+        {% if doc.abstract %}
+        <p class="result-abstract">{{ doc.abstract|truncate_words_html:30 }}</p>
+        {% endif %}
+        {% if doc.keywords %}
+        <div class="result-keywords">
+            {% for kw in doc.keywords|split_keywords %}
+            <span class="tag">{{ kw }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </article>
+    {% endfor %}
 </section>
 {% endblock %}

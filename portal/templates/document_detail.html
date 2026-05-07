@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load catalog_tags %}
 
 {% block title %}{{ document.title }} — Biblioteca Digital de Logística Pública{% endblock %}
 
@@ -20,9 +21,25 @@
     <p class="title-en">{{ document.title_en }}</p>
     {% endif %}
 
+    {% comment %}
+      Sumário curto sintetizando os principais campos. Só renderiza se
+      houver pelo menos tipologia OU autor — evita frases bicudas.
+    {% endcomment %}
+    {% if document.tipologia or document.autor_principal or document.ano %}
+    <p class="document-summary">
+      Material{% if document.tipologia %} <strong>{{ document.tipologia|lower }}</strong>{% endif %}
+      {% if document.ano %}publicado em <strong>{{ document.ano }}</strong>{% endif %}
+      {% if document.autor_principal %}por {{ document.autor_principal }}{% endif %}{% if document.topic %},
+      vinculado à coleção <a href="{% url 'catalog:collection_detail' document.topic_id %}">{{ document.topic.name }}</a>{% endif %}.
+    </p>
+    {% endif %}
+
     <div class="document-actions">
       {% if document.is_remote and document.acesso_eletronico %}
       <a href="{{ document.acesso_eletronico }}" target="_blank" rel="noopener" class="btn btn-primary">Acessar documento</a>
+      {% with dom=document.acesso_eletronico|url_domain %}
+      {% if dom %}<span class="document-actions__hint">Abre em nova aba — {{ dom }}</span>{% endif %}
+      {% endwith %}
       {% elif document.filename %}
       <a href="{% url 'catalog:download' document.code %}" class="btn btn-primary">Download</a>
       {% endif %}
@@ -30,19 +47,21 @@
   </header>
 
   <div class="document-metadata">
+    {# === IDENTIFICAÇÃO === #}
+    <h3 class="metadata-section-title">Identificação</h3>
     <table class="metadata-table">
-      <caption class="sr-only">Metadados do documento</caption>
+      <caption class="sr-only">Identificação do documento</caption>
       {% if document.autor_principal %}
       <tr><th scope="row">Autor principal</th><td>{{ document.autor_principal }}</td></tr>
       {% endif %}
       {% if document.author and document.author != document.autor_principal %}
       <tr><th scope="row">Autores</th><td>{{ document.author }}</td></tr>
       {% endif %}
-      {% if document.source %}
+      {% if document.source and not document.source|is_year_only %}
       <tr><th scope="row">Imprenta</th><td>{{ document.source }}</td></tr>
       {% endif %}
-      {% if document.publicacao %}
-      <tr><th scope="row">Publicação</th><td>{{ document.publicacao }}</td></tr>
+      {% if document.ano %}
+      <tr><th scope="row">Ano de publicação</th><td>{{ document.ano }}</td></tr>
       {% endif %}
       {% if document.edicao %}
       <tr><th scope="row">Edição</th><td>{{ document.edicao }}</td></tr>
@@ -53,6 +72,12 @@
       {% if document.nlspi %}
       <tr><th scope="row">ISSN/ISBN</th><td>{{ document.nlspi }}</td></tr>
       {% endif %}
+    </table>
+
+    {# === CLASSIFICAÇÃO === #}
+    <h3 class="metadata-section-title">Classificação</h3>
+    <table class="metadata-table">
+      <caption class="sr-only">Classificação temática do documento</caption>
       {% if document.topic %}
       <tr><th scope="row">Coleção</th><td><a href="{% url 'catalog:collection_detail' document.topic_id %}">{{ document.topic.name }}</a></td></tr>
       {% endif %}
@@ -74,17 +99,20 @@
       <tr><th scope="row">Microcategoria</th><td>{{ microcategoria.nome }}</td></tr>
       {% endif %}
       {% endwith %}
-      {% if document.type_info %}
-      <tr><th scope="row">Tipo</th><td>{{ document.type_info.name }}</td></tr>
-      {% endif %}
       {% if document.tipologia %}
       <tr><th scope="row">Tipologia</th><td>{{ document.tipologia }}</td></tr>
       {% endif %}
-      {% if document.ano %}
-      <tr><th scope="row">Ano de publicação</th><td>{{ document.ano }}</td></tr>
+      {% if document.type_info %}
+      <tr><th scope="row">Tipo de informação</th><td>{{ document.type_info.name }}</td></tr>
       {% endif %}
+    </table>
+
+    {# === ACESSO === #}
+    <h3 class="metadata-section-title">Acesso</h3>
+    <table class="metadata-table">
+      <caption class="sr-only">Permissão e formato de acesso</caption>
       {% if document.permissao %}
-      <tr><th scope="row">Permissão de acesso</th><td><span class="badge badge-{{ document.permissao|lower }}">{{ document.permissao }}</span></td></tr>
+      <tr><th scope="row">Permissão</th><td><span class="badge badge-{{ document.permissao|lower }}">{{ document.permissao }}</span></td></tr>
       {% endif %}
       {% if document.format %}
       <tr><th scope="row">Formato</th><td>{{ document.format.name }}</td></tr>
@@ -92,12 +120,14 @@
     </table>
   </div>
 
-  {% if document.abstract %}
   <section>
     <h2>Resumo</h2>
+    {% if document.abstract %}
     <p>{{ document.abstract }}</p>
+    {% else %}
+    <p class="document-empty">Resumo não disponível para este material.</p>
+    {% endif %}
   </section>
-  {% endif %}
 
   {% if document.abstract_en %}
   <section>

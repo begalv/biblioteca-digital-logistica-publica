@@ -36,7 +36,7 @@
       <div class="acervo-sidebar__actions">
         <span class="filters-summary">
           {% if filters %}
-            {{ filters|length }} filtro{{ filters|length|pluralize }} ativo{{ filters|length|pluralize }}
+            {{ filters|length }} {{ filters|length|pluralize_pt:"filtro" }} {{ filters|length|pluralize_pt:"ativo" }}
           {% else %}
             Nenhum filtro ativo
           {% endif %}
@@ -53,7 +53,7 @@
       </details>
 
       <details class="facet-group" open>
-        <summary>Categoria <span class="facet-hint">macroetapa</span></summary>
+        <summary>Categoria</summary>
         {% include "_partials/_facet_list.html" with facet=facets.categorias param="category_id" current=filters.category_id %}
       </details>
 
@@ -120,11 +120,11 @@
     <main class="acervo-results" aria-label="Resultados da busca">
       {% if query %}
       <p class="results-count">
-        <strong>{{ total_results }}</strong> resultado{{ total_results|pluralize }}
+        <strong>{{ total_results }}</strong> {{ total_results|pluralize_pt:"resultado" }}
         para <em>“{{ query }}”</em>
       </p>
       {% else %}
-      <p class="results-count"><strong>{{ total_results }}</strong> material{{ total_results|pluralize:"is" }} no acervo</p>
+      <p class="results-count"><strong>{{ total_results }}</strong> {{ total_results|pluralize_pt:"material" }} no acervo</p>
       {% endif %}
 
       {% for doc in page_obj %}
@@ -132,10 +132,12 @@
         <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
         <p class="result-meta">
           {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
-          {% if doc.source %} — {{ doc.source }}{% endif %}
+          {% if doc.source and not doc.source|is_year_only %} — {{ doc.source }}{% endif %}
           {% if doc.ano %} — {{ doc.ano }}{% endif %}
-          {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
-          {% if doc.permissao %}<span class="badge badge-{{ doc.permissao|lower }}">{{ doc.permissao }}</span>{% endif %}
+          {% with assunto=doc.assunto %}
+          {% if assunto %}<span class="badge badge-assunto">{{ assunto.nome }}</span>{% endif %}
+          {% endwith %}
+          {% if doc.category %}<span class="badge badge-categoria">{{ doc.category.name }}</span>{% endif %}
         </p>
         {% if doc.abstract %}
         <p class="result-abstract">{{ doc.abstract|truncate_words_html:30 }}</p>

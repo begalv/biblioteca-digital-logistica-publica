@@ -1,3 +1,4 @@
+{% load catalog_tags %}
 {% comment %}
 Partial reutilizável para listas de facetas com count.
 Variáveis esperadas:
@@ -16,7 +17,7 @@ Variáveis esperadas:
           <input type="checkbox" class="facet-input" name="{{ param }}" value="{{ r.value }}"
                  {% if current == r.value %}checked{% endif %}>
           <span class="facet-label">{{ r.nome }}</span>
-          <span class="facet-count" aria-label="{{ r.count }} resultado{{ r.count|pluralize }}">{{ r.count }}</span>
+          <span class="facet-count" aria-label="{{ r.count }} {{ r.count|pluralize_pt:'resultado' }}">{{ r.count }}</span>
         </label>
       </li>
     {% else %}
@@ -25,7 +26,7 @@ Variáveis esperadas:
           <input type="checkbox" class="facet-input" name="{{ param }}" value="{{ r.id }}"
                  {% if current == r.id|stringformat:"d" %}checked{% endif %}>
           <span class="facet-label">{{ r.nome }}</span>
-          <span class="facet-count" aria-label="{{ r.count }} resultado{{ r.count|pluralize }}">{{ r.count }}</span>
+          <span class="facet-count" aria-label="{{ r.count }} {{ r.count|pluralize_pt:'resultado' }}">{{ r.count }}</span>
         </label>
       </li>
     {% endif %}
