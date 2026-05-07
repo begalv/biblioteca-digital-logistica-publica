@@ -26,14 +26,15 @@
     {% endif %}
   </header>
 
-  {% if subcollections %}
+  {% if subcollections_visiveis %}
   <section>
     <h2>Subcoleções</h2>
     <div class="grid grid-3">
-      {% for sub in subcollections %}
-      <a href="{% url 'catalog:collection_detail' sub.id %}" class="card card-sm">
-        <h3>{{ sub.name }}</h3>
-        {% if sub.description %}<p>{{ sub.description }}</p>{% endif %}
+      {% for sub in subcollections_visiveis %}
+      <a href="{% url 'catalog:collection_detail' sub.topic.id %}" class="card card-sm">
+        <h3>{{ sub.topic.name }}</h3>
+        {% if sub.topic.description %}<p>{{ sub.topic.description }}</p>{% endif %}
+        <p class="collection-count">{{ sub.doc_count }} {{ sub.doc_count|pluralize_pt:"documento" }}</p>
       </a>
       {% endfor %}
     </div>
@@ -43,23 +44,32 @@
   <section>
     <h2>Documentos ({{ total_docs }})</h2>
 
-    <div class="doc-list">
-      {% for doc in page_obj %}
-      <article class="doc-item">
-        <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
-        <p class="doc-meta">
-          {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
-          {% if doc.source %} — {{ doc.source }}{% endif %}
-          {% if doc.tipologia %}<span class="badge">{{ doc.tipologia }}</span>{% endif %}
-        </p>
-        {% if doc.abstract %}
-        <p class="doc-abstract">{{ doc.abstract|truncate_words_html:25 }}</p>
-        {% endif %}
-      </article>
-      {% empty %}
-      <p>Nenhum documento nesta coleção.</p>
-      {% endfor %}
-    </div>
+    {% for doc in page_obj %}
+    <article class="result-item">
+      <h3><a href="{% url 'catalog:document_detail' doc.code %}">{{ doc.title }}</a></h3>
+      <p class="result-meta">
+        {% if doc.autor_principal %}{{ doc.autor_principal }}{% endif %}
+        {% if doc.source and not doc.source|is_year_only %} — {{ doc.source }}{% endif %}
+        {% if doc.ano %} — {{ doc.ano }}{% endif %}
+        {% with assunto=doc.assunto %}
+        {% if assunto %}<span class="badge badge-assunto">{{ assunto.nome }}</span>{% endif %}
+        {% endwith %}
+        {% if doc.category %}<span class="badge badge-categoria">{{ doc.category.name }}</span>{% endif %}
+      </p>
+      {% if doc.abstract %}
+      <p class="result-abstract">{{ doc.abstract|truncate_words_html:30 }}</p>
+      {% endif %}
+      {% if doc.keywords %}
+      <div class="result-keywords">
+        {% for kw in doc.keywords|split_keywords %}
+        <span class="tag">{{ kw }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </article>
+    {% empty %}
+    <p>Nenhum documento nesta coleção.</p>
+    {% endfor %}
 
     {% if page_obj.has_other_pages %}
     <nav class="pagination" aria-label="Paginação dos documentos">

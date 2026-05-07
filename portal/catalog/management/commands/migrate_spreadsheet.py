@@ -36,7 +36,7 @@ COLUMN_MAP = {
     "Assunto em outro idioma": "keywords_en",
     "Resumo": "abstract",
     "Abstract": "abstract_en",
-    "Nota": "nota",
+    "Nota": "description",
     "Edição": "edicao",
     "Apresentações do Evento": "event_description",
     "Imprenta": "source",
@@ -87,6 +87,15 @@ class Command(BaseCommand):
         parser.add_argument("spreadsheet", type=str, help="Caminho para a planilha .xlsx")
         parser.add_argument("--dry-run", action="store_true", help="Apenas simula, sem inserir dados")
         parser.add_argument("--sheet", type=str, default=None, help="Nome de uma aba específica")
+        parser.add_argument(
+            "--skip-red", action="store_true",
+            help="Pula linhas marcadas com fundo vermelho (curadoria sinaliza materiais a remover).",
+        )
+        parser.add_argument(
+            "--start-seq", type=int, default=1,
+            help="Sequência inicial dos códigos bdlp-XXXXXX (default 1). "
+                 "Use para imports incrementais sem colidir com códigos existentes.",
+        )
 
     def _get_write_connection(self):
         """Cria conexão de escrita usando o usuário php (não o portal_reader)."""
@@ -102,9 +111,13 @@ class Command(BaseCommand):
         spreadsheet_path = options["spreadsheet"]
         dry_run = options["dry_run"]
         sheet_name = options.get("sheet")
+        skip_red = options.get("skip_red", False)
+        start_seq = options.get("start_seq", 1)
 
+        # read_only=False para ter acesso a fill (cor de fundo) — só carrega
+        # com formatting quando precisamos detectar células vermelhas.
         try:
-            wb = openpyxl.load_workbook(spreadsheet_path, read_only=True)
+            wb = openpyxl.load_workbook(spreadsheet_path, read_only=not skip_red)
         except Exception as e:
             raise CommandError(f"Erro ao abrir planilha: {e}")
 
@@ -119,6 +132,15 @@ class Command(BaseCommand):
                 raise CommandError(f"Nenhuma aba de dados encontrada. Disponíveis: {wb.sheetnames}")
 
         self.stdout.write(f"Abas a processar: {sheets_to_process}")
+
+        # Detecção de linhas vermelhas (curadoria marca para remover/excluir)
+        red_rows_by_sheet = {}
+        if skip_red:
+            self.stdout.write("Detectando linhas vermelhas (curadoria)...")
+            for sn in sheets_to_process:
+                red_rows_by_sheet[sn] = self._detect_red_rows(wb[sn])
+                if red_rows_by_sheet[sn]:
+                    self.stdout.write(f"  [{sn}] {len(red_rows_by_sheet[sn])} linhas vermelhas serão puladas")
 
         # Carregar mapeamentos do banco
         conn = self._get_write_connection()
@@ -139,7 +161,7 @@ class Command(BaseCommand):
                 f"{len(microcategoria_map)} microcategorias"
             )
 
-            global_seq = 1  # Contador global de código
+            global_seq = start_seq  # Contador global de código (continua import incremental)
             total_inserted = 0
             total_skipped = 0
             total_errors = []
@@ -154,8 +176,21 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(f"\n[{sheet}] Aba vazia, pulando."))
                     continue
 
+                # Detectar layout do template "Inserir Material":
+                #   L1 = seções ('CLASSIFICAÇÃO' / 'METADADOS BDU')
+                #   L2 = nomes das colunas (Assunto, Categoria, ...)
+                #   L3 = indicadores '✱ OBRIGATÓRIO' (não é dado)
+                #   L4+ = dados
+                # Para BDU: L1 = headers, L2+ = dados (defaults).
+                if sheet == "Inserir Material":
+                    header_idx = 1   # 0-based: row 2 da planilha
+                    data_start = 3   # 0-based: row 4 da planilha
+                else:
+                    header_idx = 0
+                    data_start = 1
+
                 # Mapear cabeçalhos
-                header = [normalize_text(h) for h in rows[0]]
+                header = [normalize_text(h) for h in rows[header_idx]]
                 col_indices = self._map_headers(header)
 
                 mapped = len(col_indices)
@@ -168,19 +203,28 @@ class Command(BaseCommand):
                     if real_missing:
                         self.stdout.write(self.style.WARNING(f"  Colunas não encontradas: {real_missing}"))
 
-                # Filtrar linhas com dados
+                # Filtrar linhas com dados (mantém row_num original p/ skip-red)
+                red_rows = red_rows_by_sheet.get(sheet, set())
                 data_rows = []
-                for row in rows[1:]:
-                    if any(v is not None for v in row):
-                        data_rows.append(row)
+                for offset, row in enumerate(rows[data_start:], start=data_start):
+                    excel_row = offset + 1  # 1-based: linha real na planilha
+                    if not any(v is not None for v in row):
+                        continue
+                    if excel_row in red_rows:
+                        continue  # curadoria marcou pra remover
+                    data_rows.append((excel_row, row))
 
-                self.stdout.write(f"  Registros com dados: {len(data_rows)}")
+                red_skipped = len(red_rows) if red_rows else 0
+                self.stdout.write(
+                    f"  Registros com dados: {len(data_rows)}"
+                    + (f" (+ {red_skipped} vermelhos pulados)" if red_skipped else "")
+                )
 
                 sheet_inserted = 0
                 sheet_skipped = 0
                 sheet_errors = []
 
-                for row_num, row in enumerate(data_rows, start=2):
+                for row_num, row in data_rows:
                     try:
                         record = self._parse_row(row, col_indices)
                         if not record.get("title"):
@@ -248,6 +292,37 @@ class Command(BaseCommand):
 
         if dry_run:
             self.stdout.write(self.style.WARNING("\n[DRY RUN] Nenhum dado foi inserido."))
+
+    def _detect_red_rows(self, ws):
+        """Retorna set com row_num (1-based) das linhas que contêm pelo menos
+        uma célula com fundo vermelho (FF****00 ou similar).
+
+        Usado para cumprir solicitação de curadoria: marcar materiais como
+        vermelhos na planilha para que sejam excluídos do import.
+        Verifica as primeiras 20 colunas (suficiente para Assunto, Título, etc.).
+        """
+        red_rows = set()
+        max_check_col = min(ws.max_column, 20)
+        for row_idx in range(2, ws.max_row + 1):  # pula header
+            for col_idx in range(1, max_check_col + 1):
+                cell = ws.cell(row=row_idx, column=col_idx)
+                fill = cell.fill
+                if fill is None or fill.fgColor is None:
+                    continue
+                rgb = fill.fgColor.rgb
+                if not isinstance(rgb, str) or len(rgb) < 6:
+                    continue
+                rgb6 = rgb[-6:].upper()
+                if not all(c in "0123456789ABCDEF" for c in rgb6):
+                    continue
+                r = int(rgb6[0:2], 16)
+                g = int(rgb6[2:4], 16)
+                b = int(rgb6[4:6], 16)
+                # vermelho dominante: R alto, G/B baixos
+                if r > 150 and g < 100 and b < 100:
+                    red_rows.add(row_idx)
+                    break
+        return red_rows
 
     def _map_headers(self, header):
         """Mapeia cabeçalhos da planilha para campos internos com tolerância a acentos."""
@@ -322,31 +397,95 @@ class Command(BaseCommand):
         }
 
     def _resolve_topic(self, record, topic_map):
-        """Resolve o topic_id pela coluna Coleção (match direto com coleção raiz)."""
+        """Resolve o topic_id em duas etapas:
+        1) Coleção raiz pela coluna 'Coleção' (parent_id == 0).
+        2) Subcoleção sob a raiz, casando 'Tipo de informação' com o nome da
+           subcoleção (normalização de acento + tolerância a plural).
+
+        Se não houver subcoleção compatível, retorna o ID da raiz.
+        """
+        # 1) Resolve raiz
         colecao_nome = record.get("colecao", "").strip().lower()
+        root_id = None
         if colecao_nome and colecao_nome in topic_map:
             info = topic_map[colecao_nome]
             if info["parent_id"] == 0:
-                return info["id"]
+                root_id = info["id"]
 
-        # Fallback: primeira coleção raiz
-        for info in topic_map.values():
-            if info["parent_id"] == 0:
-                return info["id"]
+        if root_id is None:
+            # Fallback: primeira coleção raiz disponível
+            for info in topic_map.values():
+                if info["parent_id"] == 0:
+                    root_id = info["id"]
+                    break
+            if root_id is None:
+                return None
+
+        # 2) Tenta refinar para subcoleção via Tipo de informação
+        tipo_info = record.get("tipo_informacao", "").strip()
+        if tipo_info:
+            sub_id = self._match_subcollection(tipo_info, root_id, topic_map)
+            if sub_id is not None:
+                return sub_id
+
+        return root_id
+
+    def _match_subcollection(self, tipo_info_nome, root_id, topic_map):
+        """Acha subcoleção sob root_id cujo nome casa com tipo_info_nome.
+
+        Estratégias em ordem (primeira que casar vence):
+          a) match exato normalizado (sem acento, lowercase)
+          b) plural-tolerante (compara strip('s') dos dois lados)
+          c) substring com >= 5 chars (para casos como "Capítulo de livro" → "Livro")
+        """
+        target = strip_accents(tipo_info_nome.lower()).strip()
+        if not target:
+            return None
+
+        target_singular = target.rstrip("s")
+
+        candidates = [
+            (info["id"], strip_accents(info["name"].lower()).strip())
+            for info in topic_map.values()
+            if info["parent_id"] == root_id
+        ]
+
+        # a) Match exato
+        for tid, name in candidates:
+            if name == target:
+                return tid
+
+        # b) Plural-tolerante
+        for tid, name in candidates:
+            if name.rstrip("s") == target_singular:
+                return tid
+
+        # c) Substring (mín. 5 chars do candidato)
+        for tid, name in candidates:
+            if len(name) >= 5 and (name in target or target in name):
+                return tid
+
         return None
 
     def _resolve_category(self, categoria_name, category_map):
-        """Resolve o category_id baseado no nome da categoria."""
+        """Resolve o category_id baseado no nome da categoria.
+        Retorna None quando não encontra — evita assignar a documentos uma
+        categoria-fallback "lixo" (ex.: id 7 antigo) que polui as facetas.
+        """
         if not categoria_name:
-            return 7  # Generic
-        key = categoria_name.strip().lower()
-        if key in category_map:
-            return category_map[key]
-        # Busca parcial
+            return None
+        key = strip_accents(categoria_name.strip().lower())
         for cat_key, cat_id in category_map.items():
-            if key in cat_key or cat_key in key:
+            if strip_accents(cat_key) == key:
                 return cat_id
-        return 7  # Generic fallback
+        # Busca parcial — só se substring é >= 8 chars para evitar
+        # falsos positivos como "PCA" matching "PCA EM ANEXO".
+        if len(key) >= 8:
+            for cat_key, cat_id in category_map.items():
+                cat_norm = strip_accents(cat_key)
+                if key in cat_norm or cat_norm in key:
+                    return cat_id
+        return None
 
     def _resolve_assunto(self, name, assunto_map):
         """Resolve assunto_id por nome (case e accent insensitive)."""
