@@ -1149,6 +1149,19 @@ html.sp-fonte-diminuida-2 { font-size: 87.5%; }    /* 14px */
     gap: 1rem;
 }
 
+/* Variante de 3 colunas (home com 3 cards de estatística) */
+.sp-stats--3col .sp-stats__lista {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Linha de detalhe abaixo do rótulo (top tipos, subcategorias, etc.) */
+.sp-stats__detalhe {
+    font-size: 0.78rem;
+    color: var(--sp-cinza-escuro);
+    line-height: 1.35;
+    margin-top: 0.25rem;
+}
+
 .sp-stats__item {
     background: var(--sp-fundo-claro);
     border-left: 4px solid var(--sp-vermelho);

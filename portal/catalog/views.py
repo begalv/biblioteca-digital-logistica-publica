@@ -10,16 +10,51 @@ from .search import filter_documents, search_documents
 
 def home(request):
     """Homepage: busca, stats, coleções e últimas adições."""
+    from django.db.models import Count
+
     collections = Topic.objects.filter(parent_id=0).order_by("name")
     recent_docs = Document.objects.filter(status="a").order_by("-created")[:10]
+
+    # Stat 1: total de materiais
     total_docs = Document.objects.filter(status="a").count()
-    total_collections = collections.count()
+
+    # Stat 2: distribuição por Tipo de informação (top 3 por contagem)
+    tipo_dist = (
+        Document.objects.filter(status="a", typeinform_id__isnull=False)
+        .values("typeinform_id")
+        .annotate(c=Count("id"))
+        .order_by("-c")[:3]
+    )
+    type_info_names = {
+        ti.id: ti.name
+        for ti in TypeInformation.objects.filter(
+            id__in=[t["typeinform_id"] for t in tipo_dist]
+        )
+    }
+    tipos_top = [
+        {"nome": type_info_names.get(t["typeinform_id"], "—"), "count": t["c"]}
+        for t in tipo_dist
+    ]
+    tipos_distintos = (
+        Document.objects.filter(status="a", typeinform_id__isnull=False)
+        .values("typeinform_id").distinct().count()
+    )
+
+    # Stat 3: cobertura temática
+    from .models import Assunto, Subcategoria
+    cobertura = {
+        "assuntos": Assunto.objects.count(),
+        "subcategorias": Subcategoria.objects.count(),
+        "macroetapas": NrCategory.objects.count(),
+    }
 
     return render(request, "home.html", {
         "collections": collections,
         "recent_docs": recent_docs,
         "total_docs": total_docs,
-        "total_collections": total_collections,
+        "tipos_top": tipos_top,
+        "tipos_distintos": tipos_distintos,
+        "cobertura": cobertura,
     })
 
 
