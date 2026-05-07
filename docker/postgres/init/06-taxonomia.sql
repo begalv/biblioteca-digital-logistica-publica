@@ -56,12 +56,16 @@ CREATE INDEX IF NOT EXISTS idx_nr_document_ano ON nr_document (ano);
 CREATE INDEX IF NOT EXISTS idx_nr_document_permissao ON nr_document (permissao);
 
 -- 4. Backfill de ano para documentos existentes (regex 19xx-20xx em source) --
+-- Nota: SUBSTRING(... FROM pattern) retorna o primeiro GRUPO CAPTURADOR.
+-- Por isso `(?:19|20)` (não-capturador) — caso contrário o resultado seria
+-- só "19" ou "20". E `\m`/`\M` são as âncoras de borda de palavra do
+-- POSIX-PostgreSQL (`\b` não funciona).
 
 UPDATE nr_document
-SET ano = CAST(SUBSTRING(source FROM '\m(19|20)\d{2}\M') AS INT)
+SET ano = CAST(SUBSTRING(source FROM '\m(?:19|20)\d{2}\M') AS INT)
 WHERE ano IS NULL
   AND source IS NOT NULL
-  AND source ~ '\m(19|20)\d{2}\M';
+  AND source ~ '\m(?:19|20)\d{2}\M';
 
 -- 5. FTS index expandido — inclui campos LILP --------------------------------
 -- Substitui o índice criado em 05-custom-metadata.sql (mais estreito).
