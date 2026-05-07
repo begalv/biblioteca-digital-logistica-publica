@@ -84,3 +84,11 @@ SELECT sub.id,
 FROM topic sub
 JOIN topic parent ON sub.parent_id = parent.id
 WHERE parent.parent_id = 0;
+
+-- Vincular TODOS os usuários cadastrados a TODAS as coleções/subcoleções.
+-- O painel admin do Nou-Rau (manager/document/list.php) filtra os topics
+-- via INNER JOIN com topic_users — sem essas linhas, /manager mostra a
+-- tela vazia mesmo com 600+ documentos no banco. Idempotente via PK.
+INSERT INTO topic_users (users_id, topic_id)
+SELECT u.id, t.id FROM users u CROSS JOIN topic t
+ON CONFLICT (users_id, topic_id) DO NOTHING;
