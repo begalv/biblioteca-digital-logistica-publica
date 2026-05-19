@@ -26,6 +26,12 @@ RUN sed -i '/pt_BR.UTF-8/s/^# //' /etc/locale.gen && locale-gen
 # Habilitar mod_rewrite
 RUN a2enmod rewrite
 
+# Suprimir deprecation warnings do PHP legado (Nou-Rau é compatível com PHP 5/7)
+RUN echo "error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT" > /usr/local/etc/php/conf.d/nourau.ini \
+    && echo "display_errors = Off" >> /usr/local/etc/php/conf.d/nourau.ini \
+    && echo "log_errors = On" >> /usr/local/etc/php/conf.d/nourau.ini \
+    && echo "output_buffering = On" >> /usr/local/etc/php/conf.d/nourau.ini
+
 # Copiar configuração do Apache
 COPY apache.conf /etc/apache2/sites-available/000-default.conf
 
